@@ -518,7 +518,7 @@
       </div>
       <div class="form-group">
         <label class="form-label">Consola</label>
-        <select class="form-select" id="consola" onchange="updateSummary()">
+        <select class="form-select" id="consola" onchange="onConsolaChange()">
           <option value="">Seleccioná...</option>
           <option value="ps5_1">PlayStation 5 — Estación 1</option>
           <option value="ps5_2">PlayStation 5 — Estación 2</option>
@@ -613,27 +613,45 @@
 
   function changeMonth(dir) {
     currentDate.setMonth(currentDate.getMonth() + dir);
-    renderCalendar();
+    function onConsolaChange() {
+    updateSummary();
+    if (selectedDate) {
+      const dateStr = selectedDate.d + '/' + (selectedDate.m+1) + '/' + selectedDate.y;
+      const ocupadosPorHora = reservasOcupadas[dateStr] || {};
+      _renderSlotsUI(selectedDate.dow === 0 ? SUN_SLOTS : ALL_SLOTS, ocupadosPorHora, selectedDate.dow);
+    }
+  }
+
+  renderCalendar();
   }
 
   function selectDate(d, m, y, dow) {
     selectedDate = { d, m, y, dow };
     selectedTime = null;
     selectedEndTime = null;
-    renderCalendar();
+    function onConsolaChange() {
+    updateSummary();
+    if (selectedDate) {
+      const dateStr = selectedDate.d + '/' + (selectedDate.m+1) + '/' + selectedDate.y;
+      const ocupadosPorHora = reservasOcupadas[dateStr] || {};
+      _renderSlotsUI(selectedDate.dow === 0 ? SUN_SLOTS : ALL_SLOTS, ocupadosPorHora, selectedDate.dow);
+    }
+  }
+
+  renderCalendar();
     renderSlots(dow);
     updateSummary();
   }
 
   // Cargar reservas ocupadas desde Google Sheets (por estacion)
   const TOTAL_ESTACIONES = 4;
+  const ESTACIONES = ['PS5 — Est. 1', 'PS5 — Est. 2', 'PS5 — Est. 3', 'Nintendo Switch 2'];
 
   function cargarReservas(dateStr, dow, callback) {
     const script = document.createElement('script');
     script.src = SHEETS_URL + '?getReservas=1&fecha=' + encodeURIComponent(dateStr) + '&callback=_reservasCallback';
     window._reservasCallback = function(data) {
-      // Para cada hora, contar cuantas estaciones estan ocupadas
-      // { "15:00": Set(["ps5_1", "ps5_2"]), ... }
+      // { "15:00": ["PS5 — Est. 1", "PS5 — Est. 2"], ... }
       const ocupadosPorHora = {};
 
       if (Array.isArray(data)) {
@@ -646,33 +664,25 @@
               const consola = r.consola || 'unknown';
               for (let h = start; h < end; h++) {
                 const slot = (h < 10 ? '0' : '') + h + ':00';
-                if (!ocupadosPorHora[slot]) ocupadosPorHora[slot] = new Set();
-                ocupadosPorHora[slot].add(consola);
+                if (!ocupadosPorHora[slot]) ocupadosPorHora[slot] = [];
+                if (!ocupadosPorHora[slot].includes(consola)) {
+                  ocupadosPorHora[slot].push(consola);
+                }
               }
             }
           }
         });
       }
 
-      // Un slot esta bloqueado solo si las 4 estaciones estan ocupadas
-      // Las estaciones son: PS5 — Est. 1, PS5 — Est. 2, PS5 — Est. 3, Nintendo Switch 2
-      const ESTACIONES = ['PS5 — Est. 1', 'PS5 — Est. 2', 'PS5 — Est. 3', 'Nintendo Switch 2'];
-      const ocupados = new Set();
-      Object.keys(ocupadosPorHora).forEach(slot => {
-        const ocupadasEnSlot = ocupadosPorHora[slot];
-        const todasOcupadas = ESTACIONES.every(e => ocupadasEnSlot.has(e));
-        if (todasOcupadas) ocupados.add(slot);
-      });
-
-      reservasOcupadas[dateStr] = ocupados;
+      reservasOcupadas[dateStr] = ocupadosPorHora;
       script.remove();
-      callback(ocupados);
+      callback(ocupadosPorHora);
     };
-    script.onerror = () => { reservasOcupadas[dateStr] = new Set(); script.remove(); callback(new Set()); };
+    script.onerror = () => { reservasOcupadas[dateStr] = {}; script.remove(); callback({}); };
     document.body.appendChild(script);
   }
 
-  function renderSlots(dow, ocupados = new Set()) {
+  function renderSlots(dow) {
     const area = document.getElementById('slotsArea');
     const slots = dow === 0 ? SUN_SLOTS : ALL_SLOTS;
     const dateStr = selectedDate ? selectedDate.d + '/' + (selectedDate.m+1) + '/' + selectedDate.y : '';
@@ -687,16 +697,25 @@
     area.innerHTML = '<div class="no-date-msg">Cargando horarios...</div>';
 
     if (selectedDate) {
-      cargarReservas(dateStr, dow, (ocupados) => {
-        _renderSlotsUI(slots, ocupados, dow);
+      cargarReservas(dateStr, dow, (ocupadosPorHora) => {
+        _renderSlotsUI(slots, ocupadosPorHora, dow);
       });
     } else {
-      _renderSlotsUI(slots, new Set(), dow);
+      _renderSlotsUI(slots, {}, dow);
     }
   }
 
-  function _renderSlotsUI(slots, ocupados, dow) {
+  function isSlotOcupado(slot, consolaSeleccionada, ocupadosPorHora) {
+    const estacionesEnSlot = ocupadosPorHora[slot] || [];
+    // Bloqueado si la estacion elegida ya esta ocupada O si las 4 estaciones estan ocupadas
+    if (consolaSeleccionada && estacionesEnSlot.includes(consolaSeleccionada)) return true;
+    if (estacionesEnSlot.length >= TOTAL_ESTACIONES) return true;
+    return false;
+  }
+
+  function _renderSlotsUI(slots, ocupadosPorHora, dow) {
     const area = document.getElementById('slotsArea');
+    const consolaSeleccionada = CONSOLAS[document.getElementById('consola').value] || null;
 
     area.innerHTML = `
       <div class="slots-label">Horario de inicio</div>
@@ -710,7 +729,7 @@
     const gridStart = document.getElementById('slotsGridStart');
     slots.forEach(t => {
       const el = document.createElement('div');
-      const isOcupado = ocupados.has(t);
+      const isOcupado = isSlotOcupado(t, consolaSeleccionada, ocupadosPorHora);
       el.className = 'slot ' + (isOcupado ? 'taken' : 'free');
       if (selectedTime === t) el.classList.add('active');
       el.textContent = t;
@@ -718,7 +737,7 @@
         el.addEventListener('click', () => {
           selectedTime = t;
           selectedEndTime = null;
-          _renderSlotsUI(slots, ocupados, dow);
+          _renderSlotsUI(slots, ocupadosPorHora, dow);
           updateSummary();
         });
       }
@@ -732,12 +751,12 @@
       const startIdx = slots.indexOf(selectedTime);
       slots.forEach((t, i) => {
         if (i <= startIdx) return;
-        // Block end slot if any hour in between is occupied
         const startH = parseInt(selectedTime.split(':')[0]);
         const endH = parseInt(t.split(':')[0]);
         let bloqueado = false;
         for (let h = startH; h < endH; h++) {
-          if (ocupados.has((h < 10 ? '0' : '') + h + ':00')) { bloqueado = true; break; }
+          const slot = (h < 10 ? '0' : '') + h + ':00';
+          if (isSlotOcupado(slot, consolaSeleccionada, ocupadosPorHora)) { bloqueado = true; break; }
         }
         const el = document.createElement('div');
         el.className = 'slot ' + (bloqueado ? 'taken' : 'free');
@@ -746,7 +765,7 @@
         if (!bloqueado) {
           el.addEventListener('click', () => {
             selectedEndTime = t;
-            _renderSlotsUI(slots, ocupados, dow);
+            _renderSlotsUI(slots, ocupadosPorHora, dow);
             updateSummary();
           });
         }
@@ -862,6 +881,15 @@
     btn.textContent = 'Confirmar reserva';
     btn.style.opacity = '1';
     btn.disabled = false;
+  }
+
+  function onConsolaChange() {
+    updateSummary();
+    if (selectedDate) {
+      const dateStr = selectedDate.d + '/' + (selectedDate.m+1) + '/' + selectedDate.y;
+      const ocupadosPorHora = reservasOcupadas[dateStr] || {};
+      _renderSlotsUI(selectedDate.dow === 0 ? SUN_SLOTS : ALL_SLOTS, ocupadosPorHora, selectedDate.dow);
+    }
   }
 
   renderCalendar();

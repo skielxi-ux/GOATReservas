@@ -645,7 +645,7 @@
 
   // Cargar reservas ocupadas desde Google Sheets (por estacion)
   const TOTAL_ESTACIONES = 4;
-  const ESTACIONES = ['PS5 — Est. 1', 'PS5 — Est. 2', 'PS5 — Est. 3', 'Nintendo Switch 2'];
+  const ESTACIONES = ['PlayStation 5 — Estación 1', 'PlayStation 5 — Estación 2', 'PlayStation 5 — Estación 3', 'Nintendo Switch 2 — Estación 4'];
 
   function cargarReservas(dateStr, dow, callback) {
     const script = document.createElement('script');
@@ -782,7 +782,7 @@
 
   const PRICES = { j1:7000, j2:12000, j3:16500, j4:20000 };
   const LABELS = { j1:'1 jugador', j2:'2 jugadores', j3:'3 jugadores', j4:'4 jugadores' };
-  const CONSOLAS = { ps5_1:'PS5 — Est. 1', ps5_2:'PS5 — Est. 2', ps5_3:'PS5 — Est. 3', ns2:'Nintendo Switch 2' };
+  const CONSOLAS = { ps5_1:'PlayStation 5 — Estación 1', ps5_2:'PlayStation 5 — Estación 2', ps5_3:'PlayStation 5 — Estación 3', ns2:'Nintendo Switch 2 — Estación 4' };
 
   function updateSummary() {
     const nombre = (document.getElementById('nombre').value + ' ' + document.getElementById('apellido').value).trim();

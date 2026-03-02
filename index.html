@@ -268,7 +268,21 @@
     border-color: rgba(61,220,104,0.4);
     color: var(--green);
   }
-  .slot.taken { opacity: 0.2; cursor: not-allowed; text-decoration: line-through; }
+  .slot.taken {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    position: relative;
+  }
+  .slot.taken::after {
+    content: '';
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,80,80,0.9);
+    box-shadow: 0 0 6px rgba(255,80,80,0.7);
+  }
   .slot.active {
     background: var(--green);
     border-color: var(--green);

@@ -625,33 +625,49 @@
     updateSummary();
   }
 
-  // Cargar reservas ocupadas desde Google Sheets
+  // Cargar reservas ocupadas desde Google Sheets (por estacion)
+  const TOTAL_ESTACIONES = 4;
+
   function cargarReservas(dateStr, dow, callback) {
     const script = document.createElement('script');
     script.src = SHEETS_URL + '?getReservas=1&fecha=' + encodeURIComponent(dateStr) + '&callback=_reservasCallback';
     window._reservasCallback = function(data) {
-      // Parse occupied slots for this date
-      const ocupados = new Set();
+      // Para cada hora, contar cuantas estaciones estan ocupadas
+      // { "15:00": Set(["ps5_1", "ps5_2"]), ... }
+      const ocupadosPorHora = {};
+
       if (Array.isArray(data)) {
         data.forEach(r => {
           if (r.horario && r.horario.includes(dateStr)) {
-            // horario format: "1/3/2026 · 15:00 → 17:00 (2 hrs)"
             const match = r.horario.match(/(\d+:\d+) → (\d+:\d+)/);
             if (match) {
               const start = parseInt(match[1]);
               const end = parseInt(match[2]);
+              const consola = r.consola || 'unknown';
               for (let h = start; h < end; h++) {
-                ocupados.add((h < 10 ? '0' : '') + h + ':00');
+                const slot = (h < 10 ? '0' : '') + h + ':00';
+                if (!ocupadosPorHora[slot]) ocupadosPorHora[slot] = new Set();
+                ocupadosPorHora[slot].add(consola);
               }
             }
           }
         });
       }
+
+      // Un slot esta bloqueado solo si las 4 estaciones estan ocupadas
+      // Las estaciones son: PS5 — Est. 1, PS5 — Est. 2, PS5 — Est. 3, Nintendo Switch 2
+      const ESTACIONES = ['PS5 — Est. 1', 'PS5 — Est. 2', 'PS5 — Est. 3', 'Nintendo Switch 2'];
+      const ocupados = new Set();
+      Object.keys(ocupadosPorHora).forEach(slot => {
+        const ocupadasEnSlot = ocupadosPorHora[slot];
+        const todasOcupadas = ESTACIONES.every(e => ocupadasEnSlot.has(e));
+        if (todasOcupadas) ocupados.add(slot);
+      });
+
       reservasOcupadas[dateStr] = ocupados;
       script.remove();
       callback(ocupados);
     };
-    // Fallback si falla
     script.onerror = () => { reservasOcupadas[dateStr] = new Set(); script.remove(); callback(new Set()); };
     document.body.appendChild(script);
   }
@@ -791,7 +807,7 @@
     setTimeout(() => t.classList.remove('show'), 4000);
   }
 
-  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzu_yWRvKPIBd7yRF5d9zb2-omcNel4tC2HzWSrgGBFLYICTVcd7ZYeUo2Q13Ui3LFT/exec';
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwFgiQAyGDap-82bxyYyLjQ7dx0DkHCGXqj3QhoFg6v-sbXBXUTqKCgGURll5d0DECP/exec';
 
   function submitBooking() {
     const nombre = document.getElementById('nombre').value.trim();

@@ -791,7 +791,7 @@
     setTimeout(() => t.classList.remove('show'), 4000);
   }
 
-  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzRyIOmOYXDh11cIuA-MkKLzAVrPV9av-yyB19yR3TSUaNbuFxOvXtlFuH4OgbghBuI/exec';
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzu_yWRvKPIBd7yRF5d9zb2-omcNel4tC2HzWSrgGBFLYICTVcd7ZYeUo2Q13Ui3LFT/exec';
 
   function submitBooking() {
     const nombre = document.getElementById('nombre').value.trim();
@@ -817,7 +817,7 @@
     btn.style.opacity = '0.7';
     btn.disabled = true;
 
-    // Enviar via iframe oculto (evita CORS con Google Apps Script)
+    // Enviar via script tag con callback
     const params = new URLSearchParams({
       nombre: nombre,
       apellido: apellido,
@@ -826,19 +826,20 @@
       jugadores: tipoStr,
       consola: consolaStr,
       horario: dateStr + ' · ' + selectedTime + ' → ' + selectedEndTime + ' (' + hrs + ' hr' + (hrs>1?'s':'') + ')',
-      total: '$' + price.toLocaleString('es-AR')
+      total: '$' + price.toLocaleString('es-AR'),
+      callback: '_guardarCallback'
     });
 
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = SHEETS_URL + '?' + params.toString();
-    iframe.onload = () => {
-      iframe.remove();
-      // Limpiar cache de reservas para que recargue con la nueva
+    window._guardarCallback = function() {
       const dStr = selectedDate.d + '/' + (selectedDate.m+1) + '/' + selectedDate.y;
       delete reservasOcupadas[dStr];
     };
-    document.body.appendChild(iframe);
+
+    const scriptSave = document.createElement('script');
+    scriptSave.src = SHEETS_URL + '?' + params.toString();
+    scriptSave.onload = () => scriptSave.remove();
+    scriptSave.onerror = () => scriptSave.remove();
+    document.body.appendChild(scriptSave);
 
     showToast('✓ Reserva confirmada', '¡' + nombre + '! Te esperamos el ' + dateStr + ' de ' + selectedTime + ' a ' + selectedEndTime + '.');
 

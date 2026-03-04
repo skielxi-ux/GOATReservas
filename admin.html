@@ -439,7 +439,9 @@
 
   function renderToday() {
     const today = new Date();
-    const todayStr = today.toISOString().slice(0,10); // "2026-03-04"
+    // Use local date in Argentina (UTC-3)
+    const ar = new Date(today.getTime() - 3*60*60*1000);
+    const todayStr = ar.toISOString().slice(0,10);
     const hoy = allReservas.filter(r => r.fechaReserva && String(r.fechaReserva).startsWith(todayStr));
     const sec = document.getElementById('todaySection');
 
@@ -507,7 +509,8 @@
         </tr>
       </thead>
       <tbody>
-        ${data.map((r, i) => {
+        ${data.map((r, rowNum) => {
+          const i = rowNum;
           // Normalizar todos los campos a string
           r = Object.fromEntries(Object.entries(r).map(([k,v]) => [k, v == null ? '' : String(v)]));
           const idx = allReservas.indexOf(r);

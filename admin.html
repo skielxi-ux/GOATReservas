@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOAT ESPORTS — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a6aff;
+    --blue-light: #4da6ff;
+    --green: #3ddc68;
+    --green-dark: #28a84d;
+    --red: #ff4d4d;
+    --yellow: #ffd700;
+    --bg: #060d14;
+    --bg-card: rgba(255,255,255,0.04);
+    --bg-input: rgba(255,255,255,0.06);
+    --text: #ffffff;
+    --text-dim: rgba(255,255,255,0.45);
+    --border: rgba(255,255,255,0.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(26,106,255,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(61,220,104,0.15) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  .admin-header {
+    position: relative;
+    z-index: 10;
+    background: rgba(6,13,20,0.9);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    padding: 20px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .admin-title {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .admin-subtitle { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
+  .refresh-btn {
+    padding: 8px 20px;
+    background: rgba(61,220,104,0.1);
+    border: 1px solid rgba(61,220,104,0.3);
+    border-radius: 8px;
+    color: var(--green);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .refresh-btn:hover { background: rgba(61,220,104,0.2); }
+
+  /* MAIN */
+  .main {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* STATS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 20px;
+    backdrop-filter: blur(20px);
+  }
+  .stat-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+  }
+  .stat-value.green { color: var(--green); }
+  .stat-value.blue { color: var(--blue-light); }
+  .stat-value.yellow { color: var(--yellow); }
+  .stat-sub {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  /* TODAY */
+  .section-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(61,220,104,0.3), transparent);
+  }
+
+  .today-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .today-card {
+    background: rgba(61,220,104,0.05);
+    border: 1px solid rgba(61,220,104,0.2);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .today-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .today-station {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .today-time {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(26,106,255,0.2);
+    border: 1px solid rgba(26,106,255,0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .today-name { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .today-detail { font-size: 0.78rem; color: var(--text-dim); }
+  .today-total { font-size: 0.9rem; font-weight: 800; color: var(--green); margin-top: 8px; }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-input, .filter-select {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 9px 13px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .filter-input:focus, .filter-select:focus { border-color: rgba(61,220,104,0.5); }
+  .filter-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+  .filter-select option { background: #0d1a24; }
+  .filter-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: rgba(255,255,255,0.04); border-bottom: 1px solid var(--border); }
+  th {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  td {
+    padding: 14px 16px;
+    font-size: 0.82rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .badge-pending { background: rgba(255,215,0,0.15); color: var(--yellow); border: 1px solid rgba(255,215,0,0.3); }
+  .badge-confirmed { background: rgba(61,220,104,0.15); color: var(--green); border: 1px solid rgba(61,220,104,0.3); }
+  .badge-cancelled { background: rgba(255,77,77,0.15); color: var(--red); border: 1px solid rgba(255,77,77,0.3); }
+
+  .action-btn {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s;
+    margin-right: 4px;
+  }
+  .btn-confirm { background: rgba(61,220,104,0.1); color: var(--green); border-color: rgba(61,220,104,0.3); }
+  .btn-confirm:hover { background: rgba(61,220,104,0.2); }
+  .btn-cancel { background: rgba(255,77,77,0.1); color: var(--red); border-color: rgba(255,77,77,0.3); }
+  .btn-cancel:hover { background: rgba(255,77,77,0.2); }
+
+  .station-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(26,106,255,0.15);
+    color: var(--blue-light);
+    border: 1px solid rgba(26,106,255,0.3);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+  .empty-state .icon { font-size: 2.5rem; display: block; margin-bottom: 12px; opacity: 0.3; }
+
+  .loading {
+    text-align: center;
+    padding: 60px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: rgba(10,20,30,0.97); border: 1px solid rgba(61,220,104,0.4);
+    border-radius: 12px; padding: 14px 20px; z-index: 1000;
+    backdrop-filter: blur(20px); transform: translateY(16px); opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); max-width: 290px; pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-title { font-size: 0.68rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 3px; }
+  .toast-msg { font-size: 0.82rem; color: rgba(255,255,255,0.7); }
+
+  @media (max-width: 768px) {
+    .admin-header { padding: 16px 20px; }
+    .main { padding: 20px 16px 60px; }
+    th, td { padding: 10px 12px; }
+    .filters { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle"></div>
+  <div class="toast-msg" id="toastMsg"></div>
+</div>
+
+<div class="admin-header">
+  <div>
+    <div class="admin-title">GOAT ESPORTS — Panel Admin</div>
+    <div class="admin-subtitle" id="lastUpdate">Cargando reservas...</div>
+  </div>
+  <button class="refresh-btn" onclick="loadData()">↻ Actualizar</button>
+</div>
+
+<div class="main">
+
+  <!-- STATS -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-label">Total reservas</div><div class="stat-value" id="statTotal">—</div></div>
+    <div class="stat-card"><div class="stat-label">Reservas hoy</div><div class="stat-value green" id="statHoy">—</div></div>
+    <div class="stat-card"><div class="stat-label">Ingresos totales</div><div class="stat-value yellow" id="statIngresos">—</div></div>
+    <div class="stat-card"><div class="stat-label">Ingresos hoy</div><div class="stat-value blue" id="statIngresosHoy">—</div></div>
+  </div>
+
+  <!-- HOY -->
+  <div class="section-title">📅 Reservas de hoy</div>
+  <div id="todaySection">
+    <div class="loading">Cargando...</div>
+  </div>
+
+  <!-- TODAS -->
+  <div class="section-title" style="margin-top:40px">📋 Todas las reservas</div>
+
+  <div class="filters">
+    <span class="filter-label">Filtrar:</span>
+    <input type="text" class="filter-input" id="filterNombre" placeholder="Buscar nombre..." oninput="applyFilters()">
+    <select class="filter-select" id="filterEstacion" onchange="applyFilters()">
+      <option value="">Todas las estaciones</option>
+      <option value="Estación 1">Estación 1</option>
+      <option value="Estación 2">Estación 2</option>
+      <option value="Estación 3">Estación 3</option>
+      <option value="Estación 4">Estación 4</option>
+    </select>
+    <select class="filter-select" id="filterEstado" onchange="applyFilters()">
+      <option value="">Todos los estados</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="Confirmada">Confirmada</option>
+      <option value="Cancelada">Cancelada</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <div id="tableArea"><div class="loading">Cargando reservas...</div></div>
+  </div>
+
+</div>
+
+<script>
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw29m2MSMpr5MF0rqc09l7lipZJ5QGAzEvlAkPkt1iKlCODES70q3CTdDmw5cPmVj2v/exec';
+  let allReservas = [];
+  let estadosLocales = {};
+
+  function loadData() {
+    document.getElementById('lastUpdate').textContent = 'Actualizando...';
+    const script = document.createElement('script');
+    script.src = SHEETS_URL + '?getAllReservas=1&callback=_adminCallback&t=' + Date.now();
+    window._adminCallback = function(data) {
+      allReservas = Array.isArray(data) ? data : [];
+      renderAll();
+      document.getElementById('lastUpdate').textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-AR');
+      script.remove();
+    };
+    script.onerror = () => {
+      document.getElementById('lastUpdate').textContent = 'Error al cargar datos';
+      script.remove();
+    };
+    document.body.appendChild(script);
+  }
+
+  function parseTotal(str) {
+    if (!str) return 0;
+    return parseInt(str.replace(/[^0-9]/g, '')) || 0;
+  }
+
+  function getEstacion(consola) {
+    if (!consola) return '—';
+    const m = consola.match(/Estaci[oó]n (\d)/i);
+    return m ? 'Estación ' + m[1] : consola;
+  }
+
+  function getEstado(idx) {
+    return estadosLocales[idx] || 'Pendiente';
+  }
+
+  function renderAll() {
+    renderStats();
+    renderToday();
+    applyFilters();
+  }
+
+  function renderStats() {
+    const today = new Date();
+    const todayStr = today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear();
+    const hoy = allReservas.filter(r => r.horario && r.horario.startsWith(todayStr));
+    const totalIngresos = allReservas.reduce((s,r) => s + parseTotal(r.total), 0);
+    const hoyIngresos = hoy.reduce((s,r) => s + parseTotal(r.total), 0);
+
+    document.getElementById('statTotal').textContent = allReservas.length;
+    document.getElementById('statHoy').textContent = hoy.length;
+    document.getElementById('statIngresos').textContent = '$' + totalIngresos.toLocaleString('es-AR');
+    document.getElementById('statIngresosHoy').textContent = '$' + hoyIngresos.toLocaleString('es-AR');
+  }
+
+  function renderToday() {
+    const today = new Date();
+    const todayStr = today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear();
+    const hoy = allReservas.filter(r => r.horario && r.horario.startsWith(todayStr));
+    const sec = document.getElementById('todaySection');
+
+    if (hoy.length === 0) {
+      sec.innerHTML = '<div class="empty-state"><span class="icon">📭</span>No hay reservas para hoy</div>';
+      return;
+    }
+
+    sec.innerHTML = '<div class="today-cards">' + hoy.map((r, i) => {
+      const idx = allReservas.indexOf(r);
+      const estado = getEstado(idx);
+      const match = r.horario ? r.horario.match(/\d+:\d+ [-→]+ \d+:\d+/) : null;
+      const horario = match ? match[0] : '—';
+      return `<div class="today-card">
+        <div class="today-card-header">
+          <span class="today-station">${getEstacion(r.consola)}</span>
+          <span class="today-time">${horario}</span>
+        </div>
+        <div class="today-name">${r.nombre || ''} ${r.apellido || ''}</div>
+        <div class="today-detail">📱 ${r.whatsapp || '—'} · ${r.jugadores || '—'}</div>
+        <div class="today-total">${r.total || '—'}</div>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
+  function applyFilters() {
+    const nombre = document.getElementById('filterNombre').value.toLowerCase();
+    const estacion = document.getElementById('filterEstacion').value;
+    const estado = document.getElementById('filterEstado').value;
+
+    const filtered = allReservas.filter((r, idx) => {
+      const fullName = ((r.nombre || '') + ' ' + (r.apellido || '')).toLowerCase();
+      const est = getEstacion(r.consola);
+      const est2 = getEstado(idx);
+      if (nombre && !fullName.includes(nombre)) return false;
+      if (estacion && est !== estacion) return false;
+      if (estado && est2 !== estado) return false;
+      return true;
+    });
+
+    renderTable(filtered);
+  }
+
+  function renderTable(data) {
+    const area = document.getElementById('tableArea');
+    if (data.length === 0) {
+      area.innerHTML = '<div class="empty-state"><span class="icon">📭</span>No hay reservas con esos filtros</div>';
+      return;
+    }
+
+    area.innerHTML = `<table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fecha reserva</th>
+          <th>Cliente</th>
+          <th>WhatsApp</th>
+          <th>Estación</th>
+          <th>Jugadores</th>
+          <th>Horario</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.map((r, i) => {
+          const idx = allReservas.indexOf(r);
+          const estado = getEstado(idx);
+          const badgeClass = estado === 'Confirmada' ? 'badge-confirmed' : estado === 'Cancelada' ? 'badge-cancelled' : 'badge-pending';
+          const match = r.horario ? r.horario.match(/\d+:\d+ [-→]+ \d+:\d+/) : null;
+          const horario = match ? match[0] : (r.horario || '—');
+          return `<tr>
+            <td style="color:var(--text-dim);font-size:0.75rem">${idx + 1}</td>
+            <td style="color:var(--text-dim);font-size:0.75rem">${r.fechaReserva || '—'}</td>
+            <td><strong>${r.nombre || ''} ${r.apellido || ''}</strong><br><span style="font-size:0.72rem;color:var(--text-dim)">${r.email || ''}</span></td>
+            <td><a href="https://wa.me/54${(r.whatsapp||'').replace(/[^0-9]/g,'')}" target="_blank" style="color:var(--green);text-decoration:none;font-weight:600">${r.whatsapp || '—'}</a></td>
+            <td><span class="station-pill">${getEstacion(r.consola)}</span></td>
+            <td style="font-size:0.8rem">${r.jugadores || '—'}</td>
+            <td style="font-size:0.8rem;white-space:nowrap">${horario}</td>
+            <td style="font-weight:800;color:var(--green)">${r.total || '—'}</td>
+            <td><span class="badge ${badgeClass}">${estado}</span></td>
+            <td style="white-space:nowrap">
+              <button class="action-btn btn-confirm" onclick="setEstado(${idx}, 'Confirmada')">✓</button>
+              <button class="action-btn btn-cancel" onclick="setEstado(${idx}, 'Cancelada')">✕</button>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  function setEstado(idx, estado) {
+    estadosLocales[idx] = estado;
+    renderAll();
+    showToast(estado === 'Confirmada' ? '✓ Confirmada' : '✕ Cancelada',
+      'Estado actualizado correctamente.',
+      estado === 'Cancelada');
+  }
+
+  function showToast(title, msg, err) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastTitle').textContent = title;
+    document.getElementById('toastMsg').textContent = msg;
+    t.style.borderColor = err ? 'rgba(255,77,77,0.4)' : 'rgba(61,220,104,0.4)';
+    document.getElementById('toastTitle').style.color = err ? 'var(--red)' : 'var(--green)';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  loadData();
+  setInterval(loadData, 60000); // Auto-refresh cada 1 minuto
+</script>
+</body>
+</html>

@@ -616,23 +616,6 @@
     <div class="loading">Cargando...</div>
   </div>
 
-  <!-- CALENDARIO MENSUAL -->
-  <div class="section-title" style="margin-top:40px">🗓 Calendario de reservas</div>
-  <div class="cal-admin-wrap">
-    <div class="cal-admin-header">
-      <div class="cal-admin-month" id="calAdminMonth"></div>
-      <div class="cal-admin-nav">
-        <button onclick="changeAdminMonth(-1)">‹</button>
-        <button onclick="changeAdminMonth(1)">›</button>
-      </div>
-    </div>
-    <div class="cal-admin-grid" id="calAdminGrid"></div>
-    <div class="day-detail" id="dayDetail" style="display:none">
-      <div class="day-detail-title" id="dayDetailTitle"></div>
-      <div id="dayDetailContent"></div>
-    </div>
-  </div>
-
   <!-- GRILLA -->
   <div class="section-title" style="margin-top:40px">🗓 Grilla del día</div>
   <div class="grid-header">
@@ -915,7 +898,7 @@
           if (h === booking.startH) {
             td.innerHTML = `<div class="cell-booked ${cls}">
               <div class="booking-name">${booking.nombre.trim()}</div>
-              <div class="booking-detail">${booking.jugadores} · ${booking.total}</div>
+              <div class="booking-detail">${booking.startH}:00 a ${booking.endH}:00 · ${booking.jugadores} · ${booking.total}</div>
             </div>`;
           } else {
             td.innerHTML = `<div class="cell-cont ${cls}"><div class="cont-label">↑ ${booking.nombre.trim()}</div></div>`;

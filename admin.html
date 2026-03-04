@@ -348,76 +348,21 @@
   .chart-wrap { position: relative; height: 220px; width: 100%; display: block; }
 
   /* CALENDAR VIEW */
-  .cal-admin-wrap {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px;
-    backdrop-filter: blur(20px);
-    margin-bottom: 40px;
-  }
-  .cal-admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  .cal-admin-month {
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .cal-admin-nav {
-    display: flex;
-    gap: 8px;
-  }
-  .cal-admin-nav button {
-    width: 34px; height: 34px;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text-dim);
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    font-family: 'Montserrat', sans-serif;
-  }
-  .cal-admin-nav button:hover { background: rgba(61,220,104,0.1); border-color: rgba(61,220,104,0.4); color: var(--green); }
-  .cal-admin-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-  }
-  .cal-admin-dayname {
-    text-align: center;
-    font-size: 0.58rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    padding: 4px 0 10px;
-  }
-  .cal-admin-day {
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.15s;
-    border: 1px solid transparent;
-    position: relative;
-    gap: 3px;
-  }
-  .cal-admin-day.empty { cursor: default; }
-  .cal-admin-day.inactive { color: rgba(255,255,255,0.15); cursor: not-allowed; }
-  .cal-admin-day.has-reservas { cursor: pointer; }
-  .cal-admin-day.has-reservas:hover { background: rgba(61,220,104,0.08); border-color: rgba(61,220,104,0.3); }
-  .cal-admin-day.selected { background: rgba(61,220,104,0.12); border-color: rgba(61,220,104,0.5); }
-  .cal-admin-day.today-cal { border-color: rgba(26,106,255,0.5); }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   .cal-day-num { font-size: 0.8rem; font-weight: 600; line-height: 1; }
   .cal-dots { display: flex; gap: 2px; justify-content: center; flex-wrap: wrap; max-width: 28px; }
   .cal-dot { width: 5px; height: 5px; border-radius: 50%; }
@@ -616,6 +561,50 @@
     <div class="loading">Cargando...</div>
   </div>
 
+  <!-- GRILLA -->
+  <div class="section-title" style="margin-top:40px">🗓 Grilla del día</div>
+  <div class="grid-header">
+    <div></div>
+    <div class="date-nav">
+      <button class="grid-nav-btn" onclick="changeGridDay(-1)">‹</button>
+      <div class="date-label" id="gridDateLabel">—</div>
+      <button class="grid-nav-btn" onclick="changeGridDay(1)">›</button>
+      <button class="today-btn" onclick="setGridToday()">Hoy</button>
+    </div>
+  </div>
+  <div class="grid-wrap">
+    <table class="grid-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="th-est1">🎮 Est. 1<br><span style="color:var(--text-dim);font-weight:400;font-size:0.55rem">PlayStation 5</span></th>
+          <th class="th-est2">🎮 Est. 2<br><span style="color:var(--text-dim);font-weight:400;font-size:0.55rem">PlayStation 5</span></th>
+          <th class="th-est3">🎮 Est. 3<br><span style="color:var(--text-dim);font-weight:400;font-size:0.55rem">PlayStation 5</span></th>
+          <th class="th-est4">🕹️ Est. 4<br><span style="color:var(--text-dim);font-weight:400;font-size:0.55rem">Switch 2</span></th>
+        </tr>
+      </thead>
+      <tbody id="gridBody"></tbody>
+    </table>
+  </div>
+
+  <!-- GRÁFICOS -->
+  <div class="section-title" style="margin-top:40px">📊 Estadísticas</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Ingresos por semana</div>
+      <div class="chart-wrap"><canvas id="chartIngresos"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Reservas por día de la semana</div>
+      <div class="chart-wrap"><canvas id="chartDias"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Horas más reservadas</div>
+      <div class="chart-wrap"><canvas id="chartHoras"></canvas></div>
+    </div>
+  </div>
+
+  <!-- TODAS -->
   <!-- GRILLA -->
   <div class="section-title" style="margin-top:40px">🗓 Grilla del día</div>
   <div class="grid-header">
@@ -864,7 +853,7 @@
     allReservas.forEach(r => {
       const horario = String(r.horario || '');
       if (!horario.includes(dateStr)) return;
-      const match = horario.match(/(\d+):00 [a-] (\d+):00/);
+      const match = horario.match(/(\d+):(?:00) (?:a|-|→) (\d+):(?:00)/);
       if (!match) return;
       const startH = parseInt(match[1]);
       const endH = parseInt(match[2]);
@@ -985,7 +974,7 @@
     for (let h = 15; h <= 23; h++) horasCount[h+':00'] = 0;
     allReservas.forEach(r => {
       const horario = String(r.horario || '');
-      const match = horario.match(/(\d+):00 [a-] (\d+):00/);
+      const match = horario.match(/(\d+):(?:00) (?:a|-|→) (\d+):(?:00)/);
       if (match) {
         const start = parseInt(match[1]);
         const end = parseInt(match[2]);

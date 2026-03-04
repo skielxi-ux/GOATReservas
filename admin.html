@@ -367,8 +367,8 @@
       <option value="Estación 3">Estación 3</option>
       <option value="Estación 4">Estación 4</option>
     </select>
-    <select class="filter-select" id="filterEstado" onchange="applyFilters()">
-      <option value="">Todos los estados</option>
+    <select class="filter-select" id="filterEstado" onchange="applyFilters()" value="">
+      <option value="" selected>Todos los estados</option>
       <option value="Pendiente">Pendiente</option>
       <option value="Confirmada">Confirmada</option>
       <option value="Cancelada">Cancelada</option>
@@ -475,7 +475,7 @@
       const est = getEstacion(r.consola);
       const est2 = getEstado(idx);
       if (nombre && !fullName.includes(nombre)) return false;
-      if (estacion && est !== estacion) return false;
+      if (estacion && !est.includes(estacion.replace('Estación ',''))) return false;
       if (estado && est2 !== estado) return false;
       return true;
     });
@@ -484,6 +484,7 @@
   }
 
   function renderTable(data) {
+    console.log("renderTable called with", data.length, "rows", data);
     const area = document.getElementById('tableArea');
     if (data.length === 0) {
       area.innerHTML = '<div class="empty-state"><span class="icon">📭</span>No hay reservas con esos filtros</div>';

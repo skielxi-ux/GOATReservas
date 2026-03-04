@@ -847,22 +847,50 @@
   function loadTodayAvailability() {
     const today = new Date();
     const dateStr = today.getDate() + '/' + (today.getMonth()+1) + '/' + today.getFullYear();
+    const dow = today.getDay();
+    const maxSlots = dow === 0 ? SUN_SLOTS.length - 1 : ALL_SLOTS.length - 1; // max bookable hours
+
     const script = document.createElement('script');
     script.src = SHEETS_URL + '?getReservas=1&fecha=' + encodeURIComponent(dateStr) + '&callback=_availCallback';
     window._availCallback = function(data) {
-      const countByStation = {1:0, 2:0, 3:0, 4:0};
+      // For each station, collect occupied hours today
+      const hoursPerStation = {1: new Set(), 2: new Set(), 3: new Set(), 4: new Set()};
+
       if (Array.isArray(data)) {
         data.forEach(r => {
           if (r.horario && r.horario.includes(dateStr)) {
             for (let s = 1; s <= 4; s++) {
-              if (r.consola === STATIONS[s].consolaKey) countByStation[s]++;
+              if (r.consola === STATIONS[s].consolaKey) {
+                const match = r.horario.match(/(\d+):00 [a-] (\d+):00/);
+                if (match) {
+                  for (let h = parseInt(match[1]); h < parseInt(match[2]); h++) {
+                    hoursPerStation[s].add(h);
+                  }
+                }
+              }
             }
           }
         });
       }
+
       for (let s = 1; s <= 4; s++) {
         const el = document.getElementById('avail-' + s);
-        if (el) el.textContent = countByStation[s] > 0 ? 'Reservas hoy: ' + countByStation[s] : 'Disponible hoy';
+        const card = el ? el.closest('.station-card') : null;
+        if (!el) continue;
+
+        const occupied = hoursPerStation[s].size;
+        const isFull = occupied >= maxSlots;
+
+        if (isFull) {
+          el.innerHTML = '<span style="color:#ff6060;font-weight:700">⚠ Hoy completo — reservá otro día</span>';
+          if (card) card.style.borderColor = 'rgba(255,96,96,0.3)';
+        } else if (occupied > 0) {
+          el.textContent = (maxSlots - occupied) + ' hs disponibles hoy';
+          el.style.color = 'rgba(255,215,0,0.8)';
+        } else {
+          el.textContent = 'Disponible hoy';
+          el.style.color = '';
+        }
       }
       script.remove();
     };

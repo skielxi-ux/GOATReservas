@@ -125,9 +125,9 @@
 
   <div class="stats">
     <div class="stat"><div class="stat-lbl">Total reservas</div><div class="stat-val" id="sTotal">—</div></div>
-    <div class="stat"><div class="stat-lbl">Reservas hoy</div><div class="stat-val g" id="sHoy">—</div></div>
+    <div class="stat"><div class="stat-lbl" id="lblHoy">Reservas hoy</div><div class="stat-val g" id="sHoy">—</div></div>
     <div class="stat"><div class="stat-lbl">Ingresos totales</div><div class="stat-val y" id="sIngresos">—</div></div>
-    <div class="stat"><div class="stat-lbl">Ingresos hoy</div><div class="stat-val b" id="sIngresosHoy">—</div></div>
+    <div class="stat"><div class="stat-lbl" id="lblIngresosHoy">Ingresos hoy</div><div class="stat-val b" id="sIngresosHoy">—</div></div>
   </div>
 
   <div class="sec">🗓 Grilla del día</div>
@@ -203,11 +203,17 @@ function loadData() {
 }
 
 function renderStats() {
-  const hoy = allReservas.filter(r => isToday(r.fechaReserva));
+  const dateStr = getDateStr(gridDate);
+  // Filter reservas for the selected grid day by checking horario date
+  const diaActual = allReservas.filter(r => {
+    const h = parseHorario(r.horario);
+    if (!h) return false;
+    return (h.d + '/' + h.mo + '/' + h.y) === dateStr;
+  });
   document.getElementById('sTotal').textContent = allReservas.length;
-  document.getElementById('sHoy').textContent = hoy.length;
+  document.getElementById('sHoy').textContent = diaActual.length;
   document.getElementById('sIngresos').textContent = '$' + allReservas.reduce((a,r)=>a+parseTotal(r.total),0).toLocaleString('es-AR');
-  document.getElementById('sIngresosHoy').textContent = '$' + hoy.reduce((a,r)=>a+parseTotal(r.total),0).toLocaleString('es-AR');
+  document.getElementById('sIngresosHoy').textContent = '$' + diaActual.reduce((a,r)=>a+parseTotal(r.total),0).toLocaleString('es-AR');
 }
 
 function changeDay(d) { gridDate = new Date(gridDate); gridDate.setDate(gridDate.getDate()+d); renderGrid(); }
@@ -215,9 +221,14 @@ function goToday() { gridDate = new Date(); renderGrid(); }
 
 function renderGrid() {
   const dateStr = getDateStr(gridDate);
+  const dateStr = getDateStr(gridDate);
+  const today = new Date();
+  const isHoy = dateStr === getDateStr(today);
   document.getElementById('gridLbl').textContent = DIAS[gridDate.getDay()] + ' ' + dateStr;
+  document.getElementById('lblHoy').textContent = isHoy ? 'Reservas hoy' : 'Reservas ' + dateStr;
+  document.getElementById('lblIngresosHoy').textContent = isHoy ? 'Ingresos hoy' : 'Ingresos ' + dateStr;
+  renderStats();
 
-  // Build bookings[0..3] = list of {startH, endH, nombre, jugadores, total}
   const bk = [[],[],[],[]];
   allReservas.forEach(r => {
     const h = parseHorario(r.horario);

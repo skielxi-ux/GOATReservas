@@ -6,289 +6,223 @@
 <title>GOAT ESPORTS — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --blue: #1a6aff; --green: #3ddc68; --green-dark: #28a84d;
-    --bg: #060d14; --card: rgba(255,255,255,0.04);
-    --text: #fff; --dim: rgba(255,255,255,0.45); --border: rgba(255,255,255,0.1);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Montserrat',sans-serif; min-height:100vh; }
-  body::before {
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-    background: radial-gradient(ellipse 80% 60% at 10% 20%, rgba(26,106,255,0.2) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 50% at 90% 80%, rgba(61,220,104,0.15) 0%, transparent 55%);
-  }
-
-  /* HEADER */
-  .hdr {
-    position:relative; z-index:10; background:rgba(6,13,20,0.95);
-    border-bottom:1px solid var(--border); padding:16px 32px;
-    display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
-  }
-  .hdr-title { font-size:0.7rem; font-weight:800; letter-spacing:4px; text-transform:uppercase; color:var(--green); }
-  .hdr-sub { font-size:0.72rem; color:var(--dim); margin-top:2px; }
-  .btn-refresh {
-    padding:8px 20px; background:rgba(61,220,104,0.1); border:1px solid rgba(61,220,104,0.3);
-    border-radius:8px; color:var(--green); font-family:'Montserrat',sans-serif;
-    font-size:0.7rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
-  }
-  .btn-refresh:hover { background:rgba(61,220,104,0.2); }
-
-  /* MAIN */
-  .main { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:32px 24px 80px; }
-
-  /* STATS */
-  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:40px; }
-  .stat { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px 20px; }
-  .stat-lbl { font-size:0.6rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--dim); margin-bottom:10px; }
-  .stat-val { font-size:1.8rem; font-weight:900; }
-  .stat-val.g { color:var(--green); } .stat-val.y { color:#ffd700; } .stat-val.b { color:#4da6ff; }
-
-  /* SECTION TITLE */
-  .sec { font-size:0.65rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--green); margin-bottom:16px; display:flex; align-items:center; gap:10px; }
-  .sec::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(61,220,104,0.3),transparent); }
-
-  /* GRILLA */
-  .grid-nav { display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-bottom:12px; }
-  .date-lbl { font-size:0.88rem; font-weight:700; color:#fff; min-width:160px; text-align:center; }
-  .gnav {
-    width:32px; height:32px; background:rgba(255,255,255,0.06); border:1px solid var(--border);
-    border-radius:8px; color:var(--dim); font-size:1.1rem; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; font-family:'Montserrat',sans-serif; transition:all 0.2s;
-  }
-  .gnav:hover { background:rgba(61,220,104,0.1); border-color:rgba(61,220,104,0.4); color:var(--green); }
-  .btn-hoy {
-    padding:7px 16px; background:rgba(61,220,104,0.1); border:1px solid rgba(61,220,104,0.3);
-    border-radius:8px; color:var(--green); font-family:'Montserrat',sans-serif;
-    font-size:0.65rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer;
-  }
-  .btn-hoy:hover { background:rgba(61,220,104,0.2); }
-
-  .gwrap { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:16px; overflow:hidden; overflow-x:auto; margin-bottom:40px; }
-  .gtable { width:100%; border-collapse:collapse; min-width:620px; }
-  .gtable thead th {
-    padding:14px 10px; text-align:center; font-size:0.58rem; font-weight:700;
-    letter-spacing:2px; text-transform:uppercase; border-bottom:1px solid var(--border);
-    border-right:1px solid rgba(255,255,255,0.05);
-  }
-  .gtable thead th:first-child { width:72px; color:var(--dim); background:rgba(255,255,255,0.02); }
-  .th1{color:#4da6ff;} .th2{color:#3ddc68;} .th3{color:#ffd700;} .th4{color:#ff8c42;}
-  .gtable tbody tr:hover { background:rgba(255,255,255,0.015); }
-  .gtable tbody td {
-    border-bottom:1px solid rgba(255,255,255,0.04); border-right:1px solid rgba(255,255,255,0.04);
-    padding:6px 8px; vertical-align:top; height:60px; width:22%;
-  }
-  .gtable tbody td:first-child { background:rgba(255,255,255,0.02); border-right:1px solid var(--border); text-align:center; font-size:0.72rem; font-weight:700; color:var(--dim); vertical-align:middle; }
-  .gtable tbody td:last-child { border-right:none; }
-  .gtable tbody tr:last-child td { border-bottom:none; }
-
-  .cfree { text-align:center; color:rgba(255,255,255,0.07); font-size:0.7rem; padding-top:18px; }
-  .cbook { border-radius:8px; padding:6px 9px; height:100%; }
+  :root{--green:#3ddc68;--bg:#060d14;--card:rgba(255,255,255,0.04);--text:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.1);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Montserrat',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse 80% 60% at 10% 20%,rgba(26,106,255,0.2) 0%,transparent 60%),
+               radial-gradient(ellipse 60% 50% at 90% 80%,rgba(61,220,104,0.15) 0%,transparent 55%);}
+  .hdr{position:relative;z-index:10;background:rgba(6,13,20,0.95);border-bottom:1px solid var(--border);
+    padding:16px 32px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .hdr-title{font-size:0.7rem;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--green);}
+  .hdr-sub{font-size:0.72rem;color:var(--dim);margin-top:2px;}
+  .btn-ref{padding:8px 20px;background:rgba(61,220,104,0.1);border:1px solid rgba(61,220,104,0.3);
+    border-radius:8px;color:var(--green);font-family:'Montserrat',sans-serif;font-size:0.7rem;
+    font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+  .btn-ref:hover{background:rgba(61,220,104,0.2);}
+  .main{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:32px 24px 80px;}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:40px;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 20px;}
+  .slbl{font-size:0.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;}
+  .sval{font-size:1.8rem;font-weight:900;}
+  .sval.g{color:var(--green);}.sval.y{color:#ffd700;}.sval.b{color:#4da6ff;}
+  .sec{font-size:0.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--green);
+    margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .sec::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(61,220,104,0.3),transparent);}
+  .gnav-row{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:12px;}
+  .dlbl{font-size:0.88rem;font-weight:700;color:#fff;min-width:160px;text-align:center;}
+  .gbtn{width:32px;height:32px;background:rgba(255,255,255,0.06);border:1px solid var(--border);
+    border-radius:8px;color:var(--dim);font-size:1.1rem;cursor:pointer;display:flex;
+    align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;transition:all 0.2s;}
+  .gbtn:hover{background:rgba(61,220,104,0.1);border-color:rgba(61,220,104,0.4);color:var(--green);}
+  .hbtn{padding:7px 16px;background:rgba(61,220,104,0.1);border:1px solid rgba(61,220,104,0.3);
+    border-radius:8px;color:var(--green);font-family:'Montserrat',sans-serif;font-size:0.65rem;
+    font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
+  .hbtn:hover{background:rgba(61,220,104,0.2);}
+  .gwrap{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;overflow:hidden;overflow-x:auto;margin-bottom:40px;}
+  .gt{width:100%;border-collapse:collapse;min-width:620px;}
+  .gt thead th{padding:14px 10px;text-align:center;font-size:0.58rem;font-weight:700;
+    letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--border);border-right:1px solid rgba(255,255,255,0.05);}
+  .gt thead th:first-child{width:72px;color:var(--dim);background:rgba(255,255,255,0.02);}
+  .th1{color:#4da6ff;}.th2{color:#3ddc68;}.th3{color:#ffd700;}.th4{color:#ff8c42;}
+  .gt tbody tr:hover{background:rgba(255,255,255,0.015);}
+  .gt tbody td{border-bottom:1px solid rgba(255,255,255,0.04);border-right:1px solid rgba(255,255,255,0.04);
+    padding:6px 8px;vertical-align:top;height:60px;width:22%;}
+  .gt tbody td:first-child{background:rgba(255,255,255,0.02);border-right:1px solid var(--border);
+    text-align:center;font-size:0.72rem;font-weight:700;color:var(--dim);vertical-align:middle;}
+  .gt tbody td:last-child{border-right:none;}
+  .gt tbody tr:last-child td{border-bottom:none;}
+  .cfree{text-align:center;color:rgba(255,255,255,0.07);font-size:0.7rem;padding-top:18px;}
+  .cb{border-radius:8px;padding:6px 9px;height:100%;}
   .cb1{background:rgba(26,106,255,0.15);border:1px solid rgba(26,106,255,0.3);}
   .cb2{background:rgba(61,220,104,0.12);border:1px solid rgba(61,220,104,0.3);}
   .cb3{background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);}
   .cb4{background:rgba(255,140,66,0.12);border:1px solid rgba(255,140,66,0.3);}
-  .ccont { border-radius:0 6px 6px 0; padding:4px 8px; height:100%; }
+  .cc{border-radius:0 6px 6px 0;padding:4px 8px;height:100%;}
   .cc1{background:rgba(26,106,255,0.06);border-left:2px solid rgba(26,106,255,0.4);}
   .cc2{background:rgba(61,220,104,0.06);border-left:2px solid rgba(61,220,104,0.4);}
   .cc3{background:rgba(255,215,0,0.06);border-left:2px solid rgba(255,215,0,0.4);}
   .cc4{background:rgba(255,140,66,0.06);border-left:2px solid rgba(255,140,66,0.4);}
-  .bname { font-size:0.72rem; font-weight:800; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .btime { font-size:0.65rem; font-weight:700; color:rgba(255,255,255,0.65); margin-top:3px; }
-  .bdetail { font-size:0.6rem; color:var(--dim); margin-top:1px; }
-  .bcont-lbl { font-size:0.6rem; color:rgba(255,255,255,0.22); padding-top:8px; }
-
-  .loading { text-align:center; padding:50px; color:var(--dim); font-size:0.8rem; letter-spacing:2px; }
-  .empty { text-align:center; padding:50px; color:var(--dim); font-size:0.82rem; }
-  .empty span { font-size:2rem; display:block; margin-bottom:10px; opacity:0.3; }
-
-  /* TOAST */
-  .toast { position:fixed; bottom:24px; right:24px; background:rgba(10,20,30,0.97); border:1px solid rgba(61,220,104,0.4); border-radius:12px; padding:14px 20px; z-index:1000; transform:translateY(16px); opacity:0; transition:all 0.35s; max-width:280px; pointer-events:none; }
-  .toast.show { transform:translateY(0); opacity:1; }
-  .toast-ttl { font-size:0.68rem; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--green); margin-bottom:3px; }
-  .toast-msg { font-size:0.8rem; color:rgba(255,255,255,0.7); }
+  .bn{font-size:0.72rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bt{font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.65);margin-top:3px;}
+  .bd{font-size:0.6rem;color:var(--dim);margin-top:1px;}
+  .bcl{font-size:0.6rem;color:rgba(255,255,255,0.22);padding-top:8px;}
 </style>
 </head>
 <body>
 
-<div class="toast" id="toast"><div class="toast-ttl" id="toastTtl"></div><div class="toast-msg" id="toastMsg"></div></div>
-
 <div class="hdr">
   <div>
     <div class="hdr-title">GOAT ESPORTS — Panel Admin</div>
-    <div class="hdr-sub" id="lastUpdate">Cargando...</div>
+    <div class="hdr-sub" id="sub">Cargando...</div>
   </div>
-  <button class="btn-refresh" onclick="loadData()">↻ Actualizar</button>
+  <button class="btn-ref" onclick="loadData()">&#8635; Actualizar</button>
 </div>
 
 <div class="main">
-
   <div class="stats">
-    <div class="stat"><div class="stat-lbl">Total reservas</div><div class="stat-val" id="sTotal">—</div></div>
-    <div class="stat"><div class="stat-lbl" id="lblHoy">Reservas hoy</div><div class="stat-val g" id="sHoy">—</div></div>
-    <div class="stat"><div class="stat-lbl">Ingresos totales</div><div class="stat-val y" id="sIngresos">—</div></div>
-    <div class="stat"><div class="stat-lbl" id="lblIngresosHoy">Ingresos hoy</div><div class="stat-val b" id="sIngresosHoy">—</div></div>
+    <div class="stat"><div class="slbl">Total reservas</div><div class="sval" id="st">&#8212;</div></div>
+    <div class="stat"><div class="slbl" id="lh">Reservas del d&#237;a</div><div class="sval g" id="sh">&#8212;</div></div>
+    <div class="stat"><div class="slbl">Ingresos totales</div><div class="sval y" id="si">&#8212;</div></div>
+    <div class="stat"><div class="slbl" id="lih">Ingresos del d&#237;a</div><div class="sval b" id="sih">&#8212;</div></div>
+    <div class="stat"><div class="slbl" id="lmes">Reservas del mes</div><div class="sval g" id="smes">&#8212;</div></div>
+    <div class="stat"><div class="slbl" id="lgmes">Ganancia del mes</div><div class="sval y" id="sgmes">&#8212;</div></div>
   </div>
 
-  <div class="sec">🗓 Grilla del día</div>
-  <div class="grid-nav">
-    <button class="gnav" onclick="changeDay(-1)">‹</button>
-    <div class="date-lbl" id="gridLbl">—</div>
-    <button class="gnav" onclick="changeDay(1)">›</button>
-    <button class="btn-hoy" onclick="goToday()">Hoy</button>
+  <div class="sec">&#128197; Grilla del d&#237;a</div>
+  <div class="gnav-row">
+    <button class="gbtn" onclick="changeDay(-1)">&#8249;</button>
+    <div class="dlbl" id="dlbl">&#8212;</div>
+    <button class="gbtn" onclick="changeDay(1)">&#8250;</button>
+    <button class="hbtn" onclick="goToday()">Hoy</button>
   </div>
   <div class="gwrap">
-    <table class="gtable">
+    <table class="gt">
       <thead><tr>
         <th></th>
-        <th class="th1">🎮 Est. 1<br><span style="font-weight:400;font-size:0.52rem;color:var(--dim)">PlayStation 5</span></th>
-        <th class="th2">🎮 Est. 2<br><span style="font-weight:400;font-size:0.52rem;color:var(--dim)">PlayStation 5</span></th>
-        <th class="th3">🎮 Est. 3<br><span style="font-weight:400;font-size:0.52rem;color:var(--dim)">PlayStation 5</span></th>
-        <th class="th4">🕹️ Est. 4<br><span style="font-weight:400;font-size:0.52rem;color:var(--dim)">Switch 2</span></th>
+        <th class="th1">&#127918; Est. 1<br><span style="font-weight:400;font-size:0.52rem;color:var(--dim)">PlayStation 5</span></th>
+        <th class="th2">&#127918; Est. 2<br><span style="font-weight:400;font-size:0.52rem;color:var(--dim)">PlayStation 5</span></th>
+        <th class="th3">&#127918; Est. 3<br><span style="font-weight:400;font-size:0.52rem;color:var(--dim)">PlayStation 5</span></th>
+        <th class="th4">&#128377;&#65039; Est. 4<br><span style="font-weight:400;font-size:0.52rem;color:var(--dim)">Switch 2</span></th>
       </tr></thead>
-      <tbody id="gridBody"></tbody>
+      <tbody id="gb"></tbody>
     </table>
   </div>
-
 </div>
 
 <script>
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzdpGv3U3v2oANEUIHAfhrcvB_TUvkP6BBIgOaCz-M_oHWAuJixzUgweLfuH5lG03z3/exec';
-const HOURS = [15,16,17,18,19,20,21,22,23];
-const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-const CONSOLAS = [
-  'PlayStation 5 — Estación 1',
-  'PlayStation 5 — Estación 2',
-  'PlayStation 5 — Estación 3',
-  'Nintendo Switch 2 — Estación 4'
+var URL = 'https://script.google.com/macros/s/AKfycbzdpGv3U3v2oANEUIHAfhrcvB_TUvkP6BBIgOaCz-M_oHWAuJixzUgweLfuH5lG03z3/exec';
+var HOURS = [15,16,17,18,19,20,21,22,23];
+var DIAS = ['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
+var ESTS = [
+  'PlayStation 5 \u2014 Estaci\u00f3n 1',
+  'PlayStation 5 \u2014 Estaci\u00f3n 2',
+  'PlayStation 5 \u2014 Estaci\u00f3n 3',
+  'Nintendo Switch 2 \u2014 Estaci\u00f3n 4'
 ];
+var data = [];
+var gDate = new Date();
 
-let allReservas = [];
-let gridDate = new Date();
+function toInt(s){ return parseInt(String(s||'').replace(/[^0-9]/g,''))||0; }
 
-function parseTotal(s) { return parseInt(String(s||'').replace(/[^0-9]/g,''))||0; }
-
-function parseHorario(h) {
-  // Format: "31/3/2026 - 15:00 a 16:00 (1 hr)"
-  const m = String(h||'').match(/(\d+)\/(\d+)\/(\d+).*?(\d+):00\s*a\s*(\d+):00/);
-  if (!m) return null;
-  return { d:m[1], mo:m[2], y:m[3], startH:parseInt(m[4]), endH:parseInt(m[5]) };
+function parseH(h){
+  var m = String(h||'').match(/(\d+)\/(\d+)\/(\d+)[^0-9]+(\d+):00[^0-9]+(\d+):00/);
+  if(!m) return null;
+  return {d:m[1],mo:m[2],y:m[3],s:parseInt(m[4]),e:parseInt(m[5])};
 }
 
-function getDateStr(date) {
-  return date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
-}
+function ds(date){ return date.getDate()+'/'+(date.getMonth()+1)+'/'+date.getFullYear(); }
 
-function isToday(fechaReserva) {
-  const f = String(fechaReserva||'');
-  const today = new Date();
-  if (f.includes('T')) return f.startsWith(today.toISOString().slice(0,10));
-  const td = today.getDate().toString().padStart(2,'0') + '/' + (today.getMonth()+1).toString().padStart(2,'0') + '/' + today.getFullYear();
-  return f.startsWith(td);
-}
-
-function loadData() {
-  document.getElementById('lastUpdate').textContent = 'Actualizando...';
-  const s = document.createElement('script');
-  s.src = SHEETS_URL + '?getAllReservas=1&callback=_adminDataCb&t=' + Date.now();
-  window._adminDataCb = function(data) {
-    allReservas = Array.isArray(data) ? data : [];
-    renderStats();
-    renderGrid();
-    document.getElementById('lastUpdate').textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-AR');
-    s.remove();
+function loadData(){
+  document.getElementById('sub').textContent='Actualizando...';
+  var t=Date.now(), s=document.createElement('script');
+  s.src=URL+'?getAllReservas=1&callback=cb'+t+'&t='+t;
+  window['cb'+t]=function(d){
+    data=Array.isArray(d)?d:[];
+    render();
+    document.getElementById('sub').textContent='Actualizado: '+new Date().toLocaleTimeString('es-AR');
+    delete window['cb'+t]; s.remove();
   };
-  s.onerror = () => { document.getElementById('lastUpdate').textContent = 'Error al cargar'; s.remove(); };
-  setTimeout(() => {
-    if (document.getElementById('lastUpdate').textContent === 'Actualizando...') {
-      document.getElementById('lastUpdate').textContent = 'Timeout — intentá actualizar';
-      s.remove();
-    }
-  }, 8000);
+  s.onerror=function(){ document.getElementById('sub').textContent='Error'; s.remove(); };
   document.body.appendChild(s);
 }
 
-function renderStats() {
-  const dateStr = getDateStr(gridDate);
-  // Filter reservas for the selected grid day by checking horario date
-  const diaActual = allReservas.filter(r => {
-    const h = parseHorario(r.horario);
-    if (!h) return false;
-    return (h.d + '/' + h.mo + '/' + h.y) === dateStr;
-  });
-  document.getElementById('sTotal').textContent = allReservas.length;
-  document.getElementById('sHoy').textContent = diaActual.length;
-  document.getElementById('sIngresos').textContent = '$' + allReservas.reduce((a,r)=>a+parseTotal(r.total),0).toLocaleString('es-AR');
-  document.getElementById('sIngresosHoy').textContent = '$' + diaActual.reduce((a,r)=>a+parseTotal(r.total),0).toLocaleString('es-AR');
-}
+function render(){
+  var today=ds(new Date()), dstr=ds(gDate), isHoy=dstr===today;
 
-function changeDay(d) { gridDate = new Date(gridDate); gridDate.setDate(gridDate.getDate()+d); renderGrid(); }
-function goToday() { gridDate = new Date(); renderGrid(); }
-
-function renderGrid() {
-  const dateStr = getDateStr(gridDate);
-  const today = new Date();
-  const isHoy = dateStr === getDateStr(today);
-  document.getElementById('gridLbl').textContent = DIAS[gridDate.getDay()] + ' ' + dateStr;
-  document.getElementById('lblHoy').textContent = isHoy ? 'Reservas hoy' : 'Reservas ' + dateStr;
-  document.getElementById('lblIngresosHoy').textContent = isHoy ? 'Ingresos hoy' : 'Ingresos ' + dateStr;
-  renderStats();
-
-  const bk = [[],[],[],[]];
-  allReservas.forEach(r => {
-    const h = parseHorario(r.horario);
-    if (!h) return;
-    const hDateStr = h.d + '/' + h.mo + '/' + h.y;
-    if (hDateStr !== dateStr) return;
-    const si = CONSOLAS.indexOf(r.consola);
-    if (si < 0) return;
-    bk[si].push({
-      startH: h.startH, endH: h.endH,
-      nombre: (String(r.nombre||'') + ' ' + String(r.apellido||'')).trim(),
-      jugadores: String(r.jugadores||''),
-      total: String(r.total||'')
-    });
+  var dia=data.filter(function(r){
+    var p=parseH(r.horario);
+    return p && (p.d+'/'+p.mo+'/'+p.y)===dstr;
   });
 
-  const tbody = document.getElementById('gridBody');
-  tbody.innerHTML = '';
+  document.getElementById('st').textContent=data.length;
+  document.getElementById('sh').textContent=dia.length;
+  document.getElementById('si').textContent='$'+data.reduce(function(a,r){return a+toInt(r.total);},0).toLocaleString('es-AR');
+  document.getElementById('sih').textContent='$'+dia.reduce(function(a,r){return a+toInt(r.total);},0).toLocaleString('es-AR');
+  document.getElementById('lh').textContent=isHoy?'Reservas hoy':'Reservas '+dstr;
+  document.getElementById('lih').textContent=isHoy?'Ingresos hoy':'Ingresos '+dstr;
 
-  HOURS.forEach(h => {
-    const tr = document.createElement('tr');
+  var now=new Date();
+  var mesActual=now.getMonth(), anioActual=now.getFullYear();
+  var MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var mes=data.filter(function(r){
+    var p=parseH(r.horario);
+    if(!p) return false;
+    return parseInt(p.mo)-1===mesActual && parseInt(p.y)===anioActual;
+  });
+  document.getElementById('smes').textContent=mes.length;
+  document.getElementById('sgmes').textContent='$'+mes.reduce(function(a,r){return a+toInt(r.total);},0).toLocaleString('es-AR');
+  document.getElementById('lmes').textContent='Reservas '+MESES[mesActual];
+  document.getElementById('lgmes').textContent='Ganancia '+MESES[mesActual];
+  document.getElementById('dlbl').textContent=DIAS[gDate.getDay()]+' '+dstr;
 
-    // Hour cell
-    const tdH = document.createElement('td');
-    tdH.textContent = h + ':00';
-    tr.appendChild(tdH);
+  var bk=[[],[],[],[]];
+  data.forEach(function(r){
+    var p=parseH(r.horario);
+    if(!p) return;
+    if((p.d+'/'+p.mo+'/'+p.y)!==dstr) return;
+    var si=ESTS.indexOf(r.consola);
+    if(si<0) return;
+    bk[si].push({s:p.s,e:p.e,
+      nom:(String(r.nombre||'')+' '+String(r.apellido||'')).trim(),
+      jug:String(r.jugadores||''),tot:String(r.total||'')});
+  });
 
-    // Station cells
-    for (let si = 0; si < 4; si++) {
-      const td = document.createElement('td');
-      const n = si + 1;
-      const booking = bk[si].find(b => h >= b.startH && h < b.endH);
-
-      if (booking) {
-        if (h === booking.startH) {
-          const hrs = booking.endH - booking.startH;
-          td.innerHTML = `<div class="cbook cb${n}">
-            <div class="bname">${booking.nombre}</div>
-            <div class="btime">⏱ ${booking.startH}:00 → ${booking.endH}:00 (${hrs} hr)</div>
-            <div class="bdetail">${booking.jugadores} · ${booking.total}</div>
-          </div>`;
+  var tb=document.getElementById('gb');
+  tb.innerHTML='';
+  HOURS.forEach(function(h){
+    var tr=document.createElement('tr');
+    var td0=document.createElement('td');
+    td0.textContent=h+':00'; tr.appendChild(td0);
+    for(var si=0;si<4;si++){
+      var td=document.createElement('td'), n=si+1, bkg=null;
+      for(var i=0;i<bk[si].length;i++){
+        if(h>=bk[si][i].s && h<bk[si][i].e){bkg=bk[si][i];break;}
+      }
+      if(bkg){
+        if(h===bkg.s){
+          td.innerHTML='<div class="cb cb'+n+'">'
+            +'<div class="bn">'+bkg.nom+'</div>'
+            +'<div class="bt">&#9201; '+bkg.s+':00 &rarr; '+bkg.e+':00 ('+(bkg.e-bkg.s)+' hr)</div>'
+            +'<div class="bd">'+bkg.jug+' &middot; '+bkg.tot+'</div>'
+            +'</div>';
         } else {
-          td.innerHTML = `<div class="ccont cc${n}"><div class="bcont-lbl">↑ ${booking.nombre} (hasta ${booking.endH}:00)</div></div>`;
+          td.innerHTML='<div class="cc cc'+n+'"><div class="bcl">&#8593; '+bkg.nom+' (hasta '+bkg.e+':00)</div></div>';
         }
       } else {
-        td.innerHTML = '<div class="cfree">—</div>';
+        td.innerHTML='<div class="cfree">&mdash;</div>';
       }
       tr.appendChild(td);
     }
-    tbody.appendChild(tr);
+    tb.appendChild(tr);
   });
 }
 
+function changeDay(d){ gDate=new Date(gDate); gDate.setDate(gDate.getDate()+d); render(); }
+function goToday(){ gDate=new Date(); render(); }
+
 loadData();
-setInterval(loadData, 60000);
+setInterval(loadData,60000);
 </script>
 </body>
 </html>

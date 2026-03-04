@@ -675,7 +675,7 @@
       if (Array.isArray(data)) {
         data.forEach(r => {
           if (r.horario && r.horario.includes(dateStr) && r.consola === consolaKey) {
-            const match = r.horario.match(/(\d+):\d+ [→-]+ (\d+):\d+/);
+            const match = r.horario.match(/(\d+):\d+ [→a-]+ (\d+):\d+/);
             if (match) {
               for (let h = parseInt(match[1]); h < parseInt(match[2]); h++) {
                 ocupados.add((h < 10 ? '0' : '') + h + ':00');
@@ -809,7 +809,7 @@
       nombre, apellido, whatsapp: telefono, email,
       jugadores: LABELS[tipo],
       consola: consolaKey,
-      horario: dateStr + ' · ' + selectedTime + ' → ' + selectedEndTime + ' (' + hrs + ' hr' + (hrs>1?'s':'') + ')',
+      horario: dateStr + ' - ' + selectedTime + ' a ' + selectedEndTime + ' (' + hrs + ' hr' + (hrs>1?'s':'') + ')',
       total: '$' + price.toLocaleString('es-AR'),
       callback: '_guardarCallback'
     });

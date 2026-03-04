@@ -203,6 +203,9 @@ function loadData() {
 }
 
 function renderStats() {
+  console.log('gridDate:', getDateStr(gridDate));
+  console.log('sample horario:', allReservas[0] ? allReservas[0].horario : 'none');
+  console.log('sample parsed:', allReservas[0] ? JSON.stringify(parseHorario(allReservas[0].horario)) : 'none');
   const dateStr = getDateStr(gridDate);
   // Filter reservas for the selected grid day by checking horario date
   const diaActual = allReservas.filter(r => {

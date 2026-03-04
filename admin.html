@@ -227,7 +227,6 @@ function goToday() { gridDate = new Date(); renderGrid(); }
 
 function renderGrid() {
   const dateStr = getDateStr(gridDate);
-  const dateStr = getDateStr(gridDate);
   const today = new Date();
   const isHoy = dateStr === getDateStr(today);
   document.getElementById('gridLbl').textContent = DIAS[gridDate.getDay()] + ' ' + dateStr;

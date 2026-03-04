@@ -85,8 +85,6 @@
     <div class="stat"><div class="slbl" id="lh">Reservas del d&#237;a</div><div class="sval g" id="sh">&#8212;</div></div>
     <div class="stat"><div class="slbl">Ingresos totales</div><div class="sval y" id="si">&#8212;</div></div>
     <div class="stat"><div class="slbl" id="lih">Ingresos del d&#237;a</div><div class="sval b" id="sih">&#8212;</div></div>
-    <div class="stat"><div class="slbl" id="lmes">Reservas del mes</div><div class="sval g" id="smes">&#8212;</div></div>
-    <div class="stat"><div class="slbl" id="lgmes">Ganancia del mes</div><div class="sval y" id="sgmes">&#8212;</div></div>
   </div>
 
   <div class="sec">&#128197; Grilla del d&#237;a</div>
@@ -161,19 +159,6 @@ function render(){
   document.getElementById('sih').textContent='$'+dia.reduce(function(a,r){return a+toInt(r.total);},0).toLocaleString('es-AR');
   document.getElementById('lh').textContent=isHoy?'Reservas hoy':'Reservas '+dstr;
   document.getElementById('lih').textContent=isHoy?'Ingresos hoy':'Ingresos '+dstr;
-
-  var now=new Date();
-  var mesActual=now.getMonth(), anioActual=now.getFullYear();
-  var MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  var mes=data.filter(function(r){
-    var p=parseH(r.horario);
-    if(!p) return false;
-    return parseInt(p.mo)-1===mesActual && parseInt(p.y)===anioActual;
-  });
-  document.getElementById('smes').textContent=mes.length;
-  document.getElementById('sgmes').textContent='$'+mes.reduce(function(a,r){return a+toInt(r.total);},0).toLocaleString('es-AR');
-  document.getElementById('lmes').textContent='Reservas '+MESES[mesActual];
-  document.getElementById('lgmes').textContent='Ganancia '+MESES[mesActual];
   document.getElementById('dlbl').textContent=DIAS[gDate.getDay()]+' '+dstr;
 
   var bk=[[],[],[],[]];

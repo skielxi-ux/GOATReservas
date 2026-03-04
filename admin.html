@@ -345,7 +345,7 @@
     height: 1px;
     background: linear-gradient(to right, rgba(61,220,104,0.3), transparent);
   }
-  .chart-wrap { position: relative; height: 220px; }
+  .chart-wrap { position: relative; height: 220px; width: 100%; display: block; }
 
   @media (max-width: 768px) {
     .admin-header { padding: 16px 20px; }
@@ -449,7 +449,8 @@
   };
 
   function renderCharts() {
-    if (!allReservas.length) return;
+    console.log('renderCharts called, reservas:', allReservas.length);
+    if (!allReservas.length) { console.log('No data yet'); return; }
 
     // ── 1. Ingresos por semana ──
     const weekMap = {};
@@ -548,7 +549,7 @@
     window._adminCallback = function(data) {
       allReservas = Array.isArray(data) ? data : [];
       renderAll();
-      renderCharts();
+      setTimeout(renderCharts, 100);
       document.getElementById('lastUpdate').textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-AR');
       script.remove();
     };

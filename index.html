@@ -324,6 +324,7 @@
     outline: none; transition: border-color 0.2s, box-shadow 0.2s;
   }
   .form-input::placeholder { color: rgba(255,255,255,0.18); }
+  .form-input.error, .form-select.error { border-color: rgba(255,80,80,0.6) !important; box-shadow: 0 0 0 2px rgba(255,80,80,0.15); }
   .form-input:focus, .form-select:focus, .form-textarea:focus {
     border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(61,220,104,0.07);
   }
@@ -495,21 +496,21 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Nombre</label>
-              <input type="text" class="form-input" id="nombre" placeholder="Tu nombre" oninput="updateSummary()">
+              <input type="text" class="form-input" id="nombre" placeholder="Tu nombre" oninput="this.classList.remove('error');updateSummary()">
             </div>
             <div class="form-group">
               <label class="form-label">Apellido</label>
-              <input type="text" class="form-input" id="apellido" placeholder="Tu apellido" oninput="updateSummary()">
+              <input type="text" class="form-input" id="apellido" placeholder="Tu apellido" oninput="this.classList.remove('error');updateSummary()">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">WhatsApp</label>
-              <input type="tel" class="form-input" id="telefono" placeholder="381 000 0000" oninput="updateSummary()">
+              <input type="tel" class="form-input" id="telefono" placeholder="381 000 0000" oninput="this.classList.remove('error');updateSummary()">
             </div>
             <div class="form-group">
               <label class="form-label">Email</label>
-              <input type="email" class="form-input" id="email" placeholder="tu@email.com" oninput="updateSummary()">
+              <input type="email" class="form-input" id="email" placeholder="tu@email.com" oninput="this.classList.remove('error');updateSummary()">
             </div>
           </div>
           <div class="form-group">
@@ -790,9 +791,32 @@
     const email = document.getElementById('email').value.trim();
     const tipo = document.getElementById('tipoReserva').value;
 
-    if (!nombre || !telefono || !tipo || !selectedDate || !selectedTime || !selectedEndTime) {
-      showToast('⚠ Faltan datos', 'Completá todos los campos y elegí fecha y horario.', true);
-      return;
+    // Validaciones
+    if (!nombre || nombre.length < 2 || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(nombre)) {
+      document.getElementById('nombre').classList.add('error');
+      showToast('⚠ Nombre inválido', 'Ingresá tu nombre real (solo letras, mínimo 2 caracteres).', true);
+      document.getElementById('nombre').focus(); return;
+    }
+    if (!apellido || apellido.length < 2 || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(apellido)) {
+      document.getElementById('apellido').classList.add('error');
+      showToast('⚠ Apellido inválido', 'Ingresá tu apellido real (solo letras, mínimo 2 caracteres).', true);
+      document.getElementById('apellido').focus(); return;
+    }
+    if (!telefono || !/^\d{8,15}$/.test(telefono.replace(/[\s\-\+]/g,''))) {
+      document.getElementById('telefono').classList.add('error');
+      showToast('⚠ WhatsApp inválido', 'Ingresá un número válido (ej: 3810000000).', true);
+      document.getElementById('telefono').focus(); return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      document.getElementById('email').classList.add('error');
+      showToast('⚠ Email inválido', 'Ingresá un email válido (ej: tu@email.com).', true);
+      document.getElementById('email').focus(); return;
+    }
+    if (!tipo) {
+      showToast('⚠ Faltan datos', 'Seleccioná la cantidad de jugadores.', true); return;
+    }
+    if (!selectedDate || !selectedTime || !selectedEndTime) {
+      showToast('⚠ Faltan datos', 'Elegí una fecha y horario para tu reserva.', true); return;
     }
 
     const hrs = parseInt(selectedEndTime.split(':')[0]) - parseInt(selectedTime.split(':')[0]);

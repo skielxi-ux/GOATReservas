@@ -882,7 +882,7 @@
         const isFull = occupied >= maxSlots;
 
         if (isFull) {
-          el.innerHTML = '<span style="color:#ff6060;font-weight:700">⚠ Hoy completo — reservá otro día</span>';
+          el.innerHTML = '<span style="color:#ff6060;font-weight:700">⚠ ' + dateStr + ' completo — elegí otra fecha</span>';
           if (card) card.style.borderColor = 'rgba(255,96,96,0.3)';
         } else if (occupied > 0) {
           el.textContent = (maxSlots - occupied) + ' hs disponibles hoy';

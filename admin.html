@@ -382,7 +382,7 @@
 </div>
 
 <script>
-  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw29m2MSMpr5MF0rqc09l7lipZJ5QGAzEvlAkPkt1iKlCODES70q3CTdDmw5cPmVj2v/exec';
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzdpGv3U3v2oANEUIHAfhrcvB_TUvkP6BBIgOaCz-M_oHWAuJixzUgweLfuH5lG03z3/exec';
   let allReservas = [];
   let estadosLocales = {};
 
@@ -520,7 +520,7 @@
           const horario = match ? match[0] : (r.horario || '—');
           return `<tr>
             <td style="color:var(--text-dim);font-size:0.75rem">${i + 1}</td>
-            <td style="color:var(--text-dim);font-size:0.75rem">${(r.fechaReserva ? (() => { try { const d = new Date(r.fechaReserva); return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear()+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); } catch(e) { return r.fechaReserva; } })() : '—')}</td>
+            <td style="color:var(--text-dim);font-size:0.75rem">${(r.fechaReserva || '—')}</td>
             <td><strong>${r.nombre || ''} ${r.apellido || ''}</strong><br><span style="font-size:0.72rem;color:var(--text-dim)">${r.email || ''}</span></td>
             <td><a href="https://wa.me/54${(''+( r.whatsapp||'')).replace(/[^0-9]/g,'')}" target="_blank" style="color:var(--green);text-decoration:none;font-weight:600">${r.whatsapp||'—'}</a></td>
             <td><span class="station-pill">${getEstacion(r.consola)}</span></td>

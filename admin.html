@@ -190,8 +190,8 @@ function isToday(fechaReserva) {
 function loadData() {
   document.getElementById('lastUpdate').textContent = 'Actualizando...';
   const s = document.createElement('script');
-  s.src = SHEETS_URL + '?getAllReservas=1&callback=_cb&t=' + Date.now();
-  window._cb = function(data) {
+  s.src = SHEETS_URL + '?getAllReservas=1&callback=_adminDataCb&t=' + Date.now();
+  window._adminDataCb = function(data) {
     allReservas = Array.isArray(data) ? data : [];
     renderStats();
     renderGrid();
@@ -199,13 +199,16 @@ function loadData() {
     s.remove();
   };
   s.onerror = () => { document.getElementById('lastUpdate').textContent = 'Error al cargar'; s.remove(); };
+  setTimeout(() => {
+    if (document.getElementById('lastUpdate').textContent === 'Actualizando...') {
+      document.getElementById('lastUpdate').textContent = 'Timeout — intentá actualizar';
+      s.remove();
+    }
+  }, 8000);
   document.body.appendChild(s);
 }
 
 function renderStats() {
-  console.log('gridDate:', getDateStr(gridDate));
-  console.log('sample horario:', allReservas[0] ? allReservas[0].horario : 'none');
-  console.log('sample parsed:', allReservas[0] ? JSON.stringify(parseHorario(allReservas[0].horario)) : 'none');
   const dateStr = getDateStr(gridDate);
   // Filter reservas for the selected grid day by checking horario date
   const diaActual = allReservas.filter(r => {

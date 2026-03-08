@@ -67,6 +67,36 @@
   .bt{font-size:0.65rem;font-weight:700;color:rgba(255,255,255,0.65);margin-top:3px;}
   .bd{font-size:0.6rem;color:var(--dim);margin-top:1px;}
   .bcl{font-size:0.6rem;color:rgba(255,255,255,0.22);padding-top:8px;}
+
+  /* RESERVAS */
+  .res-wrap{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;overflow:hidden;overflow-x:auto;margin-bottom:40px;}
+  .res-table{width:100%;border-collapse:collapse;min-width:700px;}
+  .res-table thead th{padding:13px 14px;text-align:left;font-size:0.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border);background:rgba(255,255,255,0.03);white-space:nowrap;}
+  .res-table tbody tr:hover{background:rgba(255,255,255,0.02);}
+  .res-table tbody td{padding:12px 14px;font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+  .res-table tbody tr:last-child td{border-bottom:none;}
+  .res-search{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;color:#fff;padding:10px 14px;font-family:'Montserrat',sans-serif;font-size:0.82rem;outline:none;margin-bottom:14px;}
+  .res-search::placeholder{color:rgba(255,255,255,0.25);}
+  .abtn{padding:5px 12px;border-radius:6px;font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:1px solid;font-family:'Montserrat',sans-serif;transition:all 0.2s;margin-right:4px;}
+  .abtn-edit{background:rgba(26,106,255,0.1);color:#4da6ff;border-color:rgba(26,106,255,0.3);}
+  .abtn-edit:hover{background:rgba(26,106,255,0.2);}
+  .abtn-del{background:rgba(255,77,77,0.1);color:#ff6060;border-color:rgba(255,77,77,0.3);}
+  .abtn-del:hover{background:rgba(255,77,77,0.2);}
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:#0d1a24;border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:500px;position:relative;}
+  .modal-title{font-size:0.7rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:20px;}
+  .mform-group{margin-bottom:12px;}
+  .mform-label{display:block;font-size:0.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:5px;}
+  .mform-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:#fff;padding:9px 12px;font-family:'Montserrat',sans-serif;font-size:0.82rem;outline:none;}
+  .mform-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .modal-btns{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+  .mbtn{padding:9px 20px;border-radius:8px;font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Montserrat',sans-serif;border:1px solid;transition:all 0.2s;}
+  .mbtn-save{background:rgba(61,220,104,0.15);color:var(--green);border-color:rgba(61,220,104,0.3);}
+  .mbtn-save:hover{background:rgba(61,220,104,0.25);}
+  .mbtn-cancel{background:rgba(255,255,255,0.06);color:var(--dim);border-color:var(--border);}
+  .mbtn-cancel:hover{background:rgba(255,255,255,0.1);}
 </style>
 </head>
 <body>
@@ -106,7 +136,43 @@
       <tbody id="gb"></tbody>
     </table>
   </div>
+
+  <div class="sec" style="margin-top:40px">📋 Reservas</div>
+  <input type="text" class="res-search" id="resSearch" placeholder="Buscar por nombre, apellido o estación..." oninput="renderReservas()">
+  <div class="res-wrap">
+    <table class="res-table">
+      <thead><tr>
+        <th>Cliente</th><th>WhatsApp</th><th>Estación</th><th>Jugadores</th><th>Horario</th><th>Total</th><th>Acciones</th>
+      </tr></thead>
+      <tbody id="resTbody"></tbody>
+    </table>
+  </div>
 </div>
+
+
+  <!-- MODAL EDITAR -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-title">✏ Editar reserva</div>
+      <div class="mform-row">
+        <div class="mform-group"><label class="mform-label">Nombre</label><input class="mform-input" id="mNombre"></div>
+        <div class="mform-group"><label class="mform-label">Apellido</label><input class="mform-input" id="mApellido"></div>
+      </div>
+      <div class="mform-row">
+        <div class="mform-group"><label class="mform-label">WhatsApp</label><input class="mform-input" id="mWa"></div>
+        <div class="mform-group"><label class="mform-label">Email</label><input class="mform-input" id="mEmail"></div>
+      </div>
+      <div class="mform-group"><label class="mform-label">Horario</label><input class="mform-input" id="mHorario"></div>
+      <div class="mform-row">
+        <div class="mform-group"><label class="mform-label">Jugadores</label><input class="mform-input" id="mJugadores"></div>
+        <div class="mform-group"><label class="mform-label">Total</label><input class="mform-input" id="mTotal"></div>
+      </div>
+      <div class="modal-btns">
+        <button class="mbtn mbtn-cancel" onclick="closeModal()">Cancelar</button>
+        <button class="mbtn mbtn-save" onclick="saveEdit()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
 
 <script>
 var URL = 'https://script.google.com/macros/s/AKfycbzdpGv3U3v2oANEUIHAfhrcvB_TUvkP6BBIgOaCz-M_oHWAuJixzUgweLfuH5lG03z3/exec';
@@ -173,6 +239,8 @@ function render(){
       jug:String(r.jugadores||''),tot:String(r.total||'')});
   });
 
+  renderReservas();
+
   var tb=document.getElementById('gb');
   tb.innerHTML='';
   HOURS.forEach(function(h){
@@ -205,6 +273,79 @@ function render(){
 
 function changeDay(d){ gDate=new Date(gDate); gDate.setDate(gDate.getDate()+d); render(); }
 function goToday(){ gDate=new Date(); render(); }
+
+
+var editIdx = null;
+
+function renderReservas(){
+  var q = document.getElementById('resSearch').value.toLowerCase();
+  var tb = document.getElementById('resTbody');
+  tb.innerHTML = '';
+  var filtered = data.filter(function(r){
+    return !q || (r.nombre+' '+r.apellido+' '+r.consola).toLowerCase().includes(q);
+  });
+  if(!filtered.length){
+    tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--dim)">No hay reservas</td></tr>';
+    return;
+  }
+  filtered.forEach(function(r, i){
+    var idx = data.indexOf(r);
+    var p = parseFecha(r.horario);
+    var hor = p ? p.s+':00 → '+p.e+':00' : String(r.horario||'—');
+    var wp = String(r.whatsapp||'').replace(/[^0-9]/g,'');
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td><strong>'+String(r.nombre||'')+' '+String(r.apellido||'')+'</strong></td>'
+      +'<td><a href="https://wa.me/54'+wp+'" target="_blank" style="color:var(--green);text-decoration:none;font-weight:600">'+String(r.whatsapp||'—')+'</a></td>'
+      +'<td style="font-size:0.75rem;color:var(--dim)">'+String(r.consola||'—').replace('PlayStation 5 — ','PS5 — ').replace('Nintendo Switch 2 — ','Switch 2 — ')+'</td>'
+      +'<td style="font-size:0.75rem">'+String(r.jugadores||'—')+'</td>'
+      +'<td style="font-size:0.75rem;white-space:nowrap">'+hor+'</td>'
+      +'<td style="font-weight:800;color:var(--green)">'+String(r.total||'—')+'</td>'
+      +'<td style="white-space:nowrap">'
+        +'<button class="abtn abtn-edit" onclick="openEdit('+idx+')">✏ Editar</button>'
+        +'<button class="abtn abtn-del" onclick="deleteRow('+idx+')">✕ Eliminar</button>'
+      +'</td>';
+    tb.appendChild(tr);
+  });
+}
+
+function openEdit(idx){
+  editIdx = idx;
+  var r = data[idx];
+  document.getElementById('mNombre').value = r.nombre||'';
+  document.getElementById('mApellido').value = r.apellido||'';
+  document.getElementById('mWa').value = r.whatsapp||'';
+  document.getElementById('mEmail').value = r.email||'';
+  document.getElementById('mHorario').value = r.horario||'';
+  document.getElementById('mJugadores').value = r.jugadores||'';
+  document.getElementById('mTotal').value = r.total||'';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  editIdx = null;
+}
+
+function saveEdit(){
+  if(editIdx === null) return;
+  data[editIdx].nombre = document.getElementById('mNombre').value;
+  data[editIdx].apellido = document.getElementById('mApellido').value;
+  data[editIdx].whatsapp = document.getElementById('mWa').value;
+  data[editIdx].email = document.getElementById('mEmail').value;
+  data[editIdx].horario = document.getElementById('mHorario').value;
+  data[editIdx].jugadores = document.getElementById('mJugadores').value;
+  data[editIdx].total = document.getElementById('mTotal').value;
+  closeModal();
+  render();
+  renderReservas();
+}
+
+function deleteRow(idx){
+  if(!confirm('¿Eliminar la reserva de '+data[idx].nombre+' '+data[idx].apellido+'?')) return;
+  data.splice(idx, 1);
+  render();
+  renderReservas();
+}
 
 loadData();
 setInterval(loadData,60000);

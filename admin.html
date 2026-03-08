@@ -290,7 +290,7 @@ function renderReservas(){
   }
   filtered.forEach(function(r, i){
     var idx = data.indexOf(r);
-    var p = parseFecha(r.horario);
+    var p = parseH(r.horario);
     var hor = p ? p.s+':00 → '+p.e+':00' : String(r.horario||'—');
     var wp = String(r.whatsapp||'').replace(/[^0-9]/g,'');
     var tr = document.createElement('tr');

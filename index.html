@@ -412,8 +412,8 @@
   .pay-alias{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;margin-bottom:22px;}
   .pay-alias-lbl{font-size:0.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:4px;}
   .pay-alias-val{font-size:0.95rem;font-weight:800;color:#fff;letter-spacing:1px;}
-  .pay-btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#7b2ff7,#a855f7);border:none;border-radius:12px;color:#fff;font-family:'Montserrat',sans-serif;font-size:0.82rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all 0.2s;margin-bottom:10px;}
-  .pay-btn:hover{box-shadow:0 6px 20px rgba(123,47,247,0.4);transform:translateY(-1px);}
+  .pay-btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#009ee3,#00b9f2);border:none;border-radius:12px;color:#fff;font-family:'Montserrat',sans-serif;font-size:0.82rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all 0.2s;margin-bottom:10px;}
+  .pay-btn:hover{box-shadow:0 6px 20px rgba(0,158,227,0.4);transform:translateY(-1px);}
   .pay-skip{font-size:0.7rem;color:rgba(255,255,255,0.3);cursor:pointer;text-decoration:underline;}
   .pay-skip:hover{color:rgba(255,255,255,0.6);}
 </style>
@@ -972,17 +972,17 @@
 <div class="pay-overlay" id="payOverlay">
   <div class="pay-modal">
     <button class="pay-close" onclick="closePayModal()">&#10005;</button>
-    <div class="pay-logo">💙</div>
+    <div class="pay-logo">💳</div>
     <div class="pay-title">Completar reserva</div>
-    <div class="pay-msg">Para confirmar tu reserva debés abonar el <strong style="color:#fff">50% del total</strong> por Belo.</div>
+    <div class="pay-msg">Para confirmar tu reserva debés abonar el <strong style="color:#fff">50% del total</strong> por Mercado Pago.</div>
     <div class="pay-amount"><span>$</span><span id="payAmount">—</span></div>
     <div class="pay-detail" id="payDetail">—</div>
     <div class="pay-alias">
-      <div class="pay-alias-lbl">Alias Belo</div>
-      <div class="pay-alias-val">goatesports.belo</div>
+      <div class="pay-alias-lbl">Alias Mercado Pago</div>
+      <div class="pay-alias-val">goat.esports</div>
     </div>
-    <a class="pay-btn" href="https://belo.app/goatesports" target="_blank" onclick="confirmAfterPay()">
-      Pagar con Belo
+    <a class="pay-btn" href="https://link.mercadopago.com.ar/goat.esports" target="_blank" onclick="confirmAfterPay()">
+      Pagar con Mercado Pago
     </a>
     <div class="pay-skip" onclick="closePayModal()">Volver atrás</div>
   </div>

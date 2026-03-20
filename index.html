@@ -397,25 +397,7 @@
   .d2 { animation-delay: 0.15s; opacity: 0; }
   .d3 { animation-delay: 0.25s; opacity: 0; }
 
-  /* MODAL PAGO */
-  .pay-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
-  .pay-overlay.open{display:flex;}
-  .pay-modal{background:#0d1a24;border:1px solid rgba(61,220,104,0.3);border-radius:20px;padding:32px;width:100%;max-width:420px;text-align:center;position:relative;}
-  .pay-close{position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,0.3);font-size:1.4rem;cursor:pointer;line-height:1;}
-  .pay-close:hover{color:#fff;}
-  .pay-logo{font-size:2.2rem;margin-bottom:8px;}
-  .pay-title{font-size:0.7rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:20px;}
-  .pay-msg{font-size:0.9rem;color:rgba(255,255,255,0.75);margin-bottom:6px;line-height:1.6;}
-  .pay-amount{font-size:2rem;font-weight:900;color:#fff;margin:14px 0;}
-  .pay-amount span{font-size:1rem;color:var(--green);font-weight:700;}
-  .pay-detail{font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:24px;}
-  .pay-alias{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;margin-bottom:22px;}
-  .pay-alias-lbl{font-size:0.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:4px;}
-  .pay-alias-val{font-size:0.95rem;font-weight:800;color:#fff;letter-spacing:1px;}
-  .pay-btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#009ee3,#00b9f2);border:none;border-radius:12px;color:#fff;font-family:'Montserrat',sans-serif;font-size:0.82rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all 0.2s;margin-bottom:10px;}
-  .pay-btn:hover{box-shadow:0 6px 20px rgba(0,158,227,0.4);transform:translateY(-1px);}
-  .pay-skip{font-size:0.7rem;color:rgba(255,255,255,0.3);cursor:pointer;text-decoration:underline;}
-  .pay-skip:hover{color:rgba(255,255,255,0.6);}
+  
 </style>
 </head>
 <body>
@@ -870,7 +852,6 @@
     document.body.appendChild(scriptSave);
 
     showToast('✓ Reserva confirmada', '¡' + nombre + '! Te esperamos el ' + dateStr + ' de ' + selectedTime + ' a ' + selectedEndTime + '.');
-    openPayModal(nombre, price, dateStr, selectedTime, selectedEndTime);
 
     btn.textContent = 'Confirmar reserva';
     btn.style.opacity = '1';
@@ -878,22 +859,7 @@
   }
 
 
-  function openPayModal(nombre, total, dateStr, startTime, endTime) {
-    var mitad = Math.round(total / 2);
-    document.getElementById('payAmount').textContent = mitad.toLocaleString('es-AR');
-    document.getElementById('payDetail').textContent = 'Reserva del ' + dateStr + ' de ' + startTime + ' a ' + endTime + ' · Total: $' + total.toLocaleString('es-AR');
-    document.getElementById('payOverlay').classList.add('open');
-  }
-
-  function closePayModal() {
-    document.getElementById('payOverlay').classList.remove('open');
-  }
-
-  function confirmAfterPay() {
-    setTimeout(function(){ closePayModal(); }, 500);
-  }
-
-  // ── Toast ──
+    // ── Toast ──
   function showToast(title, msg, err) {
     const t = document.getElementById('toast');
     document.getElementById('toastTitle').textContent = title;
@@ -968,23 +934,4 @@
   loadTodayAvailability();
 </script>
 
-<!-- MODAL PAGO -->
-<div class="pay-overlay" id="payOverlay">
-  <div class="pay-modal">
-    <button class="pay-close" onclick="closePayModal()">&#10005;</button>
-    <div class="pay-logo">💳</div>
-    <div class="pay-title">Completar reserva</div>
-    <div class="pay-msg">Para confirmar tu reserva debés abonar el <strong style="color:#fff">50% del total</strong> por Mercado Pago.</div>
-    <div class="pay-amount"><span>$</span><span id="payAmount">—</span></div>
-    <div class="pay-detail" id="payDetail">—</div>
-    <div class="pay-alias">
-      <div class="pay-alias-lbl">Alias Mercado Pago</div>
-      <div class="pay-alias-val">goat.esports</div>
-    </div>
-    <a class="pay-btn" href="https://link.mercadopago.com.ar/goat.esports" target="_blank" onclick="confirmAfterPay()">
-      Pagar con Mercado Pago
-    </a>
-    <div class="pay-skip" onclick="closePayModal()">Volver atrás</div>
-  </div>
-</div>
 </body>

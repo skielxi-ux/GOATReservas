@@ -342,9 +342,16 @@ function saveEdit(){
 
 function deleteRow(idx){
   if(!confirm('¿Eliminar la reserva de '+data[idx].nombre+' '+data[idx].apellido+'?')) return;
-  data.splice(idx, 1);
-  render();
-  renderReservas();
+  var t=Date.now(), s=document.createElement('script');
+  s.src=URL+'?deleteRow='+idx+'&callback=delCb'+t+'&t='+t;
+  window['delCb'+t]=function(res){
+    data.splice(idx, 1);
+    render();
+    renderReservas();
+    delete window['delCb'+t]; s.remove();
+  };
+  s.onerror=function(){ alert('Error al eliminar'); s.remove(); };
+  document.body.appendChild(s);
 }
 
 loadData();

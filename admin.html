@@ -342,16 +342,31 @@ function saveEdit(){
 
 function deleteRow(idx){
   if(!confirm('¿Eliminar la reserva de '+data[idx].nombre+' '+data[idx].apellido+'?')) return;
-  var t=Date.now(), s=document.createElement('script');
-  s.src=URL+'?deleteRow='+idx+'&callback=delCb'+t+'&t='+t;
-  window['delCb'+t]=function(res){
+  var cbName = 'delCb' + Date.now();
+  window[cbName] = function(res){
     data.splice(idx, 1);
     render();
     renderReservas();
-    delete window['delCb'+t]; s.remove();
+    delete window[cbName];
   };
-  s.onerror=function(){ alert('Error al eliminar'); s.remove(); };
+  var s = document.createElement('script');
+  s.src = URL + '?deleteRow=' + idx + '&callback=' + cbName + '&t=' + Date.now();
+  s.onerror = function(){
+    delete window[cbName];
+    // Aunque falle el callback, eliminamos localmente
+    data.splice(idx, 1);
+    render();
+    renderReservas();
+  };
   document.body.appendChild(s);
+  setTimeout(function(){
+    if(window[cbName]){
+      delete window[cbName];
+      data.splice(idx, 1);
+      render();
+      renderReservas();
+    }
+  }, 3000);
 }
 
 loadData();

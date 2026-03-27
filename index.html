@@ -78,7 +78,7 @@
   }
   .stations-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); max-width: 640px; margin: 0 auto;
     gap: 20px;
   }
   @media (max-width: 600px) { .stations-grid { grid-template-columns: 1fr; } }
@@ -107,7 +107,7 @@
   .station-card:hover { transform: translateY(-4px); border-color: rgba(61,220,104,0.3); }
   .station-card:hover::before { opacity: 1; }
 
-  .station-icon { font-size: 2.5rem; margin-bottom: 16px; }
+  .station-icon { font-size: 2.5rem; margin-bottom: 16px; display:flex; justify-content:center; align-items:center; height:48px; }
   .station-name {
     font-size: 1.1rem;
     font-weight: 800;
@@ -419,34 +419,59 @@
 <div class="page active" id="pageStations">
   <div class="stations-page">
     <div class="stations-title fu d2">Seleccioná tu estación</div>
+    <div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.25);border-radius:12px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:flex-start;gap:12px;">
+      <span style="font-size:1.2rem;flex-shrink:0">⏰</span>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.75);line-height:1.7;font-weight:500">
+        <strong style="color:#ffd700;display:block;margin-bottom:4px;letter-spacing:0.5px">Respetemos los horarios</strong>
+        Por favor cumplí el horario de tu reserva y llegá a tiempo. El tiempo comienza a correr desde el horario reservado, estés o no en el local. ¡Gracias por entender!
+      </p>
+    </div>
     <div class="stations-grid fu d2">
       <div class="station-card" onclick="selectStation(1)">
-        <div class="station-icon">🎮</div>
+        <div class="station-icon"><svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="12" width="32" height="20" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+  <circle cx="28" cy="22" r="3.5" fill="none" stroke="#4da6ff" stroke-width="1.5"/>
+  <circle cx="33" cy="17" r="1.5" fill="#3ddc68"/>
+  <circle cx="23" cy="17" r="1.5" fill="#ff6060"/>
+  <circle cx="28" cy="13" r="1.5" fill="#ffd700"/>
+  <rect x="10" y="19" width="1.5" height="6" rx="0.75" fill="rgba(255,255,255,0.5)"/>
+  <rect x="7.5" y="21.5" width="6" height="1.5" rx="0.75" fill="rgba(255,255,255,0.5)"/>
+  <rect x="16" y="20" width="4" height="2" rx="1" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+</svg></div>
         <div class="station-name">Estación 1</div>
         <div class="station-console">PlayStation 5</div>
         <div class="station-availability" id="avail-1">Cargando disponibilidad...</div>
         <button class="station-btn">Reservar</button>
       </div>
       <div class="station-card" onclick="selectStation(2)">
-        <div class="station-icon">🎮</div>
+        <div class="station-icon"><svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="12" width="32" height="20" rx="6" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+  <circle cx="28" cy="22" r="3.5" fill="none" stroke="#4da6ff" stroke-width="1.5"/>
+  <circle cx="33" cy="17" r="1.5" fill="#3ddc68"/>
+  <circle cx="23" cy="17" r="1.5" fill="#ff6060"/>
+  <circle cx="28" cy="13" r="1.5" fill="#ffd700"/>
+  <rect x="10" y="19" width="1.5" height="6" rx="0.75" fill="rgba(255,255,255,0.5)"/>
+  <rect x="7.5" y="21.5" width="6" height="1.5" rx="0.75" fill="rgba(255,255,255,0.5)"/>
+  <rect x="16" y="20" width="4" height="2" rx="1" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+</svg></div>
         <div class="station-name">Estación 2</div>
         <div class="station-console">PlayStation 5</div>
         <div class="station-availability" id="avail-2">Cargando disponibilidad...</div>
         <button class="station-btn">Reservar</button>
       </div>
-      <div class="station-card" onclick="selectStation(3)">
+      <div class="station-card" style="display:none">
         <div class="station-icon">🎮</div>
         <div class="station-name">Estación 3</div>
         <div class="station-console">PlayStation 5</div>
-        <div class="station-availability" id="avail-3">Cargando disponibilidad...</div>
-        <button class="station-btn">Reservar</button>
+        <div class="station-availability" style="color:#ff6060;font-weight:700">🔧 Estación en mantenimiento</div>
+        <button class="station-btn" disabled style="opacity:0.5;cursor:not-allowed;background:rgba(255,255,255,0.1)">No disponible</button>
       </div>
-      <div class="station-card" onclick="selectStation(4)">
+      <div class="station-card" style="display:none">
         <div class="station-icon">🕹️</div>
         <div class="station-name">Estación 4</div>
         <div class="station-console">Nintendo Switch 2</div>
-        <div class="station-availability" id="avail-4">Cargando disponibilidad...</div>
-        <button class="station-btn">Reservar</button>
+        <div class="station-availability" style="color:#ff6060;font-weight:700">🔧 Estación en mantenimiento</div>
+        <button class="station-btn" disabled style="opacity:0.5;cursor:not-allowed;background:rgba(255,255,255,0.1)">No disponible</button>
       </div>
     </div>
   </div>
